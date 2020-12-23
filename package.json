@@ -1,7 +1,7 @@
 {
   "name": "zab-ids",
   "description": "Electron app inspired by the FAA's IDS4 for use by ZAB on the VATSIM network",
-  "version": "APP_VER",
+  "version": "0.0.0",
   "author": "Daan Janssen",
   "private": true,
   "scripts": {

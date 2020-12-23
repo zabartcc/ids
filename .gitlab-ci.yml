@@ -8,5 +8,5 @@ build and publish installer:
   image: electronuserland/builder:wine
   stage: build
   script:
-    - sed -i "s/APP_VER/${VERSION_ID}/g" package.json
+    - sed -i "s/0.0.0/${VERSION_ID}/g" package.json
     - npm install && npm run publish
