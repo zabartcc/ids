@@ -126,11 +126,12 @@ export default {
 <style scoped lang="scss">
 	#atis-strip {
 		background-color: #1E1E1E;
+		min-width: 700px;
 		margin-bottom: .5em;
 		border-radius: 5px;
 		padding: .5em .5em 0 .5em;
 		font-family: inherit;
-		overflow-x: hidden;
+		overflow: hidden;
 
 		.title {
 			padding: 0;

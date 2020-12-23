@@ -82,14 +82,15 @@ export default {
 		width: 100%;
 		background-color: #0F0F0F;
 		border-radius: 15px;
-		overflow: auto;
 		padding: 0;
 		font-family: "Lucida Console", "Lucida Sans Typewriter", monaco;
 	}
 
 	.atis_wrapper {
-		min-width: 700px;
+		min-height: 90%;
 		padding: 0 1em;
+		width: 100%;
+		overflow: auto;
 	}
 	.top_bar {
 		width: 100%;

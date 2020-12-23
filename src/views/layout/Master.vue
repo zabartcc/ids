@@ -10,14 +10,20 @@
 				</div>
 			</div>
 		</main>
+		<footer>
+			<Footer />
+		</footer>
 	</div>
 </template>
 
 <script>
 import Header from '@/views/partial/Header.vue';
+import Footer from '@/views/partial/Footer.vue';
+
 export default {
 	components: {
-		Header
+		Header,
+		Footer
 	}
 };
 </script>
@@ -31,5 +37,9 @@ export default {
 	.main-content {
 		margin: 0!important;
 	}
+}
+
+footer {
+	padding-bottom: 28px;
 }
 </style>

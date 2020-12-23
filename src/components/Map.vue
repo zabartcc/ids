@@ -156,6 +156,7 @@
 import { LMap, LTileLayer, LPolygon, LWmsTileLayer, LMarker, LIcon, LPolyline,LTooltip } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 import { zabApi } from '@/helpers/axios.js';
+import { mapActions } from 'vuex';
 
 export default {
 	name: 'Map',
@@ -186,6 +187,7 @@ export default {
 		async getDepArrivals() {
 			zabApi.get('/online').then((response) => {
 				this.planes = response.data.pilots;
+				this.update(Math.floor(new Date().getTime() / 1000));
 			}).catch((err) => console.log(err));
 		},
 		newCoord(long, lat, speed, heading) {
@@ -211,7 +213,10 @@ export default {
 				status = "C";
 			}
 			return cruise.toString().slice(0,3) + status + newAltitude;
-		}
+		},
+		...mapActions('timer', {
+			update: 'setTimestamp'
+		})
 	},
 }
 </script>
