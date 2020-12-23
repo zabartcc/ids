@@ -8,13 +8,11 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "dist": "electron-builder build",
-    "clean": "modclean -n default:safe",
     "electron:build": "vue-cli-service electron:build",
-    "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
     "electron": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+	"postuninstall": "electron-builder install-app-deps",
+	"electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten"
   },
   "main": "background.js",
   "dependencies": {
