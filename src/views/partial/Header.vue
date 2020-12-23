@@ -6,7 +6,7 @@
 					Controller
 				</div>
 				<div class="text">
-					—
+					Ur Mom
 				</div>
 			</div>
 			<div class="bar">

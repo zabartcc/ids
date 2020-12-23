@@ -4,6 +4,7 @@
 import { app, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import { autoUpdater } from 'electron-updater'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 import path from 'path';
 
@@ -67,6 +68,9 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
+	setInterval(async () => { // check for updates every 60 seconds
+		autoUpdater.checkForUpdatesAndNotify();
+	}, 60000);
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
     try {

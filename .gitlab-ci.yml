@@ -1,0 +1,12 @@
+variables:
+  VERSION_ID: '0.9.0-$CI_COMMIT_SHORT_SHA'
+
+stages:
+  - build
+
+build and publish installer:
+  image: electronuserland/builder:wine
+  stage: build
+  script:
+    - sed -i "s/APP_VER/${VERSION_ID}/g" package.json
+    - npm install && npm run publish

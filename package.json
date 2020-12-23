@@ -1,7 +1,7 @@
 {
   "name": "zab-ids",
   "description": "Electron app inspired by the FAA's IDS4 for use by ZAB on the VATSIM network",
-  "version": "0.5.4",
+  "version": "APP_VER",
   "author": "Daan Janssen",
   "private": true,
   "scripts": {
@@ -14,15 +14,17 @@
     "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
     "electron": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+	"postuninstall": "electron-builder install-app-deps",
+	"publish": "npm run electron:build -- --win -p always"
   },
   "main": "background.js",
   "dependencies": {
     "@vue-leaflet/vue-leaflet": "^0.5.0",
     "axios": "^0.21.0",
     "core-js": "^3.8.1",
-    "materialize-css": "^1.0.0",
+    "electron-updater": "^4.3.5",
     "leaflet": "^1.7.1",
+    "materialize-css": "^1.0.0",
     "metar-parser": "^1.0.0",
     "vue": "^3.0.4",
     "vue-router": "^4.0.0-0",
