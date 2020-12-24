@@ -13,8 +13,10 @@
 				</form>
 			</div>
 		</div>
-		<div v-for="station in stations" :key="station._id" class="atis_wrapper">
-			<AtisStrip :info="station" />
+		<div class="atis_wrapper">
+			<template v-for="station in stations" :key="station._id">
+				<AtisStrip :info="station" />
+			</template>
 		</div>
 	</div>
 </template>
@@ -57,8 +59,8 @@ export default {
 			});
 		},
 		async addStation() {
-			if(this.addedStations.indexOf(this.atisInput) === -1) {
-				this.addedStations.push(this.atisInput);
+			if(this.addedStations.indexOf(this.atisInput.toUpperCase()) === -1) {
+				this.addedStations.push(this.atisInput.toUpperCase());
 				localStorage.removeItem('atis_stations');
 				localStorage.setItem('atis_stations', JSON.stringify(this.addedStations));
 				this.atisInput = '';
@@ -80,6 +82,7 @@ export default {
 	#atis {
 		height: 100%;
 		width: 100%;
+		overflow: auto;
 		background-color: #0F0F0F;
 		border-radius: 15px;
 		padding: 0;
@@ -87,10 +90,7 @@ export default {
 	}
 
 	.atis_wrapper {
-		min-height: 90%;
-		padding: 0 1em;
-		width: 100%;
-		overflow: auto;
+		padding: 0 1em .5em 1em;
 	}
 	.top_bar {
 		width: 100%;

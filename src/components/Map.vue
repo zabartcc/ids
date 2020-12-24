@@ -175,8 +175,7 @@ export default {
 	data() {
 		return {
 			zoom: 6,
-			planes: [],
-			overflights: []
+			planes: []
 		}
 	},
 	async mounted() {
