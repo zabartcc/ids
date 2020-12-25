@@ -4,7 +4,7 @@
 			Version {{version || 'dev'}}&nbsp;
 		</div>
 		<div class="last_updated">
-			| Updates every 2 minutes | Last updated <span id="show_time">...</span>s ago
+			| Planes update in real-time, all else every 2 minutes | Last updated <span id="show_time">...</span>s ago
 		</div>
 	</div>
 </template>

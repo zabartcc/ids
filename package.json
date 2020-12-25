@@ -1,7 +1,7 @@
 {
   "name": "zab-ids",
   "description": "Electron app inspired by the FAA's IDS4 for use by ZAB on the VATSIM network",
-  "version": "APP_VER",
+  "version": "0.0.0",
   "author": "Albuquerque ARTCC",
   "private": true,
   "scripts": {
@@ -11,9 +11,9 @@
     "electron:build": "vue-cli-service electron:build",
     "electron": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
-	"postuninstall": "electron-builder install-app-deps",
-	"electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
-	"publish": "npm run electron:build -- --win -p always"
+    "postuninstall": "electron-builder install-app-deps",
+    "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
+    "publish": "npm run electron:build -- --win -p always"
   },
   "main": "background.js",
   "dependencies": {
@@ -26,7 +26,8 @@
     "metar-parser": "^1.0.0",
     "vue": "^3.0.4",
     "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0"
+    "vuex": "^4.0.0-0",
+    "ws": "^7.4.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

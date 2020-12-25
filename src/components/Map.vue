@@ -143,10 +143,10 @@
 			<l-wms-tile-layer baseUrl="https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi" layers="nexrad-n0r-900913" :transparent="true" format="image/png" :opacity="0.3" :z-index="100"></l-wms-tile-layer>
 			
 			<!-- Dynamically draw planes on map here -->
-			<l-marker v-for="plane in planes" :lat-lng="[plane.lat, plane.lng]" :key="plane.callsign">
+			<l-marker v-for="(plane, callsign) in aircraft" :lat-lng="[+plane.lat, +plane.lng]" :key="callsign">
 				<l-icon :icon-url="require('@/assets/images/icons/diamond.png')" :icon-size="[12, 12]" :tooltipAnchor="[50,20]" />
-				<l-polyline :lat-lngs="[[plane.lat, plane.lng], newCoord(plane.lat, plane.lng, plane.speed, plane.heading)]" color="#C8C806" className="p_track" />
-				<l-tooltip :options="{permanent: true, sticky: true, offset: ([5,30])}">{{plane.callsign}}<br />{{calcAltitude(plane.altitude, plane.planned_cruise)}}<br />{{plane.code}} {{('000' + plane.speed).slice(-3)}}<br /><span class="acft_destination">{{plane.dest}}</span></l-tooltip>
+				<l-polyline :lat-lngs="[[plane.lat, plane.lng], newCoord(+plane.lat, +plane.lng, plane.speed, plane.heading)]" color="#C8C806" className="p_track" />
+				<l-tooltip :options="{permanent: true, sticky: true, offset: ([5,30])}">{{plane.callsign}}<br />{{calcAltitude(plane.altitude, plane.cruise)}}<br />999 {{('000' + plane.speed).slice(-3)}}<br /><span class="acft_destination">{{plane.dest}}</span></l-tooltip>
 			</l-marker>
 		</l-map>
 	</div>
@@ -174,15 +174,22 @@ export default {
 	},
 	data() {
 		return {
+			ws: null,
+			aircraft: {},
 			zoom: 6,
-			planes: []
 		}
 	},
 	async mounted() {
-		await this.getDepArrivals();
-		setInterval(this.getDepArrivals, 120000); // Two minutes
+		// await this.getDepArrivals();
+		// setInterval(this.getDepArrivals, 120000); // Two minutes
+		this.ws = new WebSocket(`${process.env.VUE_APP_WS_URL}/ids/aircraft`)
+		this.ws.onmessage = this.handleWsUpdate
 	},
 	methods: {
+		handleWsUpdate({data}) {
+			data = JSON.parse(data);
+			this.aircraft[data.callsign] = data;
+		},
 		async getDepArrivals() {
 			zabApi.get('/online').then((response) => {
 				this.planes = response.data.pilots;
@@ -198,20 +205,20 @@ export default {
 			const coordX = lat + (dx / 57.27);
 			return [coordY, coordX];
 		},
-		calcAltitude(altitude, cruise) {
-			let status = "";
-			let newAltitude = "";
-			if(altitude <= (cruise - 400) || altitude >= (cruise + 400)) {
-				newAltitude = (('000' + Math.round(altitude / 100)).toString()).slice(-3);
+		calcAltitude(altitude, cruise = 0) {
+			const cruiseAbbv = Math.round(+cruise/100);
+			const altAbbv = Math.round(+altitude/100);
+			const cruiseString = `000${cruiseAbbv}`.slice(-3);
+			const altString = `000${altAbbv}`.slice(-3);
+			if(Math.abs(cruiseAbbv - altAbbv) <= 4) {
+				return `${cruiseString}C`;
 			}
-			if(altitude + 400 < cruise) {
-				status = "–"
-			} else if (altitude > cruise + 400) {
-				status = "+"
-			} else {
-				status = "C";
+			if(cruiseAbbv > altAbbv) {
+				return `${cruiseString}-${altString}`
 			}
-			return cruise.toString().slice(0,3) + status + newAltitude;
+			if(cruiseAbbv < altAbbv) {
+				return `${cruiseString}+${altString}`
+			}
 		},
 		...mapActions('timer', {
 			update: 'setTimestamp'
