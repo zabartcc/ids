@@ -188,7 +188,12 @@ export default {
 	methods: {
 		handleWsUpdate({data}) {
 			data = JSON.parse(data);
-			this.aircraft[data.callsign] = data;
+			if(data.type == "update") {
+				this.aircraft[data.callsign] = data;
+			}
+			if(data.type == "delete") {
+				delete this.aircraft[data.callsign];
+			}
 		},
 		async getDepArrivals() {
 			zabApi.get('/online').then((response) => {
