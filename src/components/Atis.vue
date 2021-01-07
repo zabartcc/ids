@@ -7,16 +7,14 @@
 			<div class="add">
 				<i class="material-icons" @click="openAtis">add_box</i>
 			</div>
-			<div class="add_atis" v-if="newAtis">
+			<div class="add_atis" v-show="newAtis">
 				<form class="add_input" @submit.prevent=addStation>
-					<input type="text" class="browser-default add_input" minlength="4" maxlength="4" v-model="atisInput" />
+					<input type="text" ref="new_atis_input" class="browser-default add_input" minlength="4" maxlength="4" v-model="atisInput" />
 				</form>
 			</div>
 		</div>
 		<div class="atis_wrapper">
-			<template v-for="station in stations" :key="station._id">
-				<AtisStrip :info="station" />
-			</template>
+			<AtisStrip v-for="station in userStations" :key=station.airport :info="station" />
 		</div>
 	</div>
 </template>
@@ -34,45 +32,96 @@ export default {
 	},
 	data() {
 		return {
-			addedStations: null,
-			stations: [],
+			userStations: {},
+			allStations: {},
 			newAtis: false,
-			atisInput: ''
+			atisInput: '',
+			sse: null
 		}
 	},
 	async mounted() {
-		await this.getStations();
-		await this.loadStations();
-		setInterval(this.loadStations, 120000); // Two minutes
+		await this.getAllStations();
+		this.getUserStations();
+		this.sse = new EventSource(`${process.env.VUE_APP_API_URL}/ids/atis`)
+		this.sse.onmessage = this.handleAtisUpdate;
 	},
 	methods: {
-		async getStations() {
-			this.addedStations = localStorage.getItem('atis_stations') ? JSON.parse(localStorage.getItem('atis_stations')) : [];
-		},
-		async loadStations() {
-			const {data} = await zabApi.get('/online/atis');
-			this.stations = [];
-			data.forEach((station) => {
-				if(this.addedStations.includes(station.airport)) {
-					this.stations.push(station);
+		getUserStations() {
+			const userStations = JSON.parse(localStorage.getItem('atis_stations')) || [];
+			userStations.forEach(station => {
+				if(Object.keys(this.allStations).includes(station)) {
+					this.userStations[station] = this.allStations[station];
 				}
-			});
+			})
 		},
-		async addStation() {
-			if(this.addedStations.indexOf(this.atisInput.toUpperCase()) === -1) {
-				this.addedStations.push(this.atisInput.toUpperCase());
-				localStorage.removeItem('atis_stations');
-				localStorage.setItem('atis_stations', JSON.stringify(this.addedStations));
-				this.atisInput = '';
-				await this.loadStations();
-
-			} else {
-				return this.atisInput = '';
+		async getAllStations() {
+			const { data } = await zabApi.get('/ids/stations');
+			for await(const apt of data) {
+				this.allStations[apt] = {
+					airport: apt,
+					letter: null,
+					metar: null,
+					dep: null,
+					arr: null,
+				}
+				await this.getStationData(apt);
 			}
-			await this.openAtis();
 		},
+		async getStationData(station) {
+			const {data} = (await zabApi.get(`/ids/stations/${station}`));
+			const theStation = this.allStations[station];
+			this.allStations[station] = {...theStation, ...data}
+		},
+		handleAtisUpdate({data}) {
+			data = JSON.parse(data);
+			const theStation = this.allStations[data.station];
+			console.log({data, theStation})
+			if(data.type == 'update') {
+				this.allStations[data.station] = {...theStation, ...data}
+			}
+			if(data.type == 'delete') {
+				this.allStations[data.station] = {
+					...theStation,
+					letter: null,
+					dep: null,
+					arr: null,
+				} 
+			}
+			if(Object.keys(this.userStations).includes(data.station)) {
+				this.userStations[data.station] = this.allStations[data.station];
+			}
+		},
+		removeUserStation(station) {
+			delete this.userStations[station];
+			localStorage.setItem('atis_stations', JSON.stringify(Object.keys(this.userStations)));
+		},
+		addStation() {
+			console.log(this.atisInput)
+			const station = this.atisInput.toUpperCase();
+			if(Object.keys(this.allStations).includes(station)) {
+				this.userStations[station] = this.allStations[station];
+			}
+			localStorage.setItem('atis_stations', JSON.stringify(Object.keys(this.userStations)));
+			this.newAtis = !this.newAtis;
+		},
+		// async addStation() {
+		// 	if(this.addedStations.indexOf(this.atisInput.toUpperCase()) === -1) {
+		// 		this.addedStations.push(this.atisInput.toUpperCase());
+		// 		localStorage.removeItem('atis_stations');
+		// 		localStorage.setItem('atis_stations', JSON.stringify(this.addedStations));
+		// 		this.atisInput = '';
+		// 		await this.getAllStations();
+
+		// 	} else {
+		// 		return this.atisInput = '';
+		// 	}
+		// 	await this.openAtis();
+		// },
 		openAtis() {
 			this.newAtis = !this.newAtis;
+			if(this.newAtis) {
+				this.$nextTick(() => this.$refs.new_atis_input.focus())
+			}
 		}
 	}
 }

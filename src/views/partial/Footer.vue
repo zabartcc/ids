@@ -1,10 +1,7 @@
 <template>
-	<div class="footer flex">
-		<div class="version">
-			Version {{version || 'dev'}}&nbsp;
-		</div>
-		<div class="last_updated">
-			| Planes update in real-time, all else every 2 minutes | Last updated <span id="show_time">...</span>s ago
+	<div class="footer">
+		<div class="info">
+			Version {{version || 'dev'}} | Last updated <span id="show_time">...</span>s ago
 		</div>
 	</div>
 </template>
@@ -21,7 +18,7 @@ export default {
 	},
 	mounted() {
 		setInterval(() => {
-			document.getElementById('show_time').innerHTML = Math.round(((new Date() / 1000) - new Date(this.timestamp)));
+			document.getElementById('show_time').innerHTML = Math.ceil((Date.now() - this.timestamp)/1000);
 		}, 1000);
 	},
 	computed: {
@@ -42,13 +39,11 @@ export default {
 	width: 100vw;
 	bottom: 0;
 	color: #6C6C6C;
+	display: flex;
 
-	.version {
+	.info {
 		color: #6C6C6C;
 	}
 }
 
-.flex {
-	display: flex;
-}
 </style>

@@ -155,8 +155,8 @@
 <script>
 import { LMap, LTileLayer, LPolygon, LWmsTileLayer, LMarker, LIcon, LPolyline,LTooltip } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
-import { zabApi } from '@/helpers/axios.js';
 import { mapActions } from 'vuex';
+import {zabApi} from '@/helpers/axios.js';
 
 export default {
 	name: 'Map',
@@ -174,19 +174,28 @@ export default {
 	},
 	data() {
 		return {
-			ws: null,
+			sse: null,
 			aircraft: {},
 			zoom: 6,
 		}
 	},
 	async mounted() {
-		// await this.getDepArrivals();
-		// setInterval(this.getDepArrivals, 120000); // Two minutes
-		this.ws = new WebSocket(`${process.env.VUE_APP_WS_URL}/ids/aircraft`)
-		this.ws.onmessage = this.handleWsUpdate
+		await this.initAircraft();
+		this.sse = new EventSource(`${process.env.VUE_APP_API_URL}/ids/aircraft/feed`)
+		this.sse.onmessage = this.handleAircraftUpdate
 	},
 	methods: {
-		handleWsUpdate({data}) {
+		async initAircraft() {
+			const allAircraft = (await zabApi.get('/ids/aircraft')).data;
+			for(const callsign of allAircraft) {
+				this.getAircraftData(callsign);
+			}
+			this.setTimestamp(Date.now())
+		},
+		async getAircraftData(callsign) {
+			this.aircraft[callsign] = (await zabApi.get(`/ids/aircraft/${callsign}`)).data;
+		},
+		handleAircraftUpdate({data}) {
 			data = JSON.parse(data);
 			if(data.type == "update") {
 				this.aircraft[data.callsign] = data;
@@ -194,12 +203,7 @@ export default {
 			if(data.type == "delete") {
 				delete this.aircraft[data.callsign];
 			}
-		},
-		async getDepArrivals() {
-			zabApi.get('/online').then((response) => {
-				this.planes = response.data.pilots;
-				this.update(Math.floor(new Date().getTime() / 1000));
-			}).catch((err) => console.log(err));
+			this.setTimestamp(Date.now())
 		},
 		newCoord(long, lat, speed, heading) {
 			const radian = heading * (Math.PI / 180);
@@ -225,9 +229,9 @@ export default {
 				return `${cruiseString}+${altString}`
 			}
 		},
-		...mapActions('timer', {
-			update: 'setTimestamp'
-		})
+		...mapActions('timer', [
+			'setTimestamp'
+		]),
 	},
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-	<div id="atis-strip" v-if="!deleted">
+	<div id="atis-strip">
 		<div class="row border_bottom">
 			<div class="col s2 title">
 				{{info.airport ?? '????'}}
@@ -8,12 +8,12 @@
 				AREA STATUS INFORMATION
 			</div>
 			<div class="col s1 delete_atis">
-				<i class="material-icons tiny" @click="deleteAtis(info.airport)">clear</i>
+				<i class="material-icons tiny" @click="delAtis(info.airport)">clear</i>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col s1 atis_code">
-				{{info.code ?? '—'}}
+				{{info.letter || '—'}}
 			</div>
 			<div class="col s3 runways">
 				<div class="landing">
@@ -21,7 +21,7 @@
 						Landing
 					</div>
 					<div class="runway_identifier">
-						{{landing}}
+						{{info.arr || '-'}}
 					</div>
 				</div>
 				<div class="departing">
@@ -29,7 +29,7 @@
 						Departing
 					</div>
 					<div class="runway_identifier">
-						{{departing}}
+						{{info.dep || '-'}}
 					</div>
 				</div>
 			</div>
@@ -64,60 +64,14 @@ import parser from 'metar-parser';
 export default {
 	name: 'AtisStrip',
 	props: ['info'],
-	data() {
-		return {
-			deleted: false
-		}
-	},
-	async mounted() {
-	},
 	methods: {
-		async deleteAtis(airport) {
-			let stations = JSON.parse(localStorage.getItem('atis_stations'));
-			stations = stations.filter(item => item !== airport);
-			console.log(stations);
-			localStorage.setItem('atis_stations', JSON.stringify(stations));
-			this.deleted = true;
+		delAtis(station) {
+			this.$parent.removeUserStation(station)
 		}
 	},
 	computed: {
 		parsedMetar() {
 			return parser(this.info.metar);
-		},
-		departing() {
-			if(this.info.text) {
-				const info = this.info.text.split('.')[4];
-				return info.replace('DEPARTING RWY', '').replace(/\s\s+/g, '');
-			} else {
-				return '—';
-			}
-		},
-		landing() {
-			if(this.info.text) {
-				const approaches = [];
-				const sentences = this.info.text.split('.');
-				for(const sentence of sentences) {
-					if(sentence.indexOf('VISUAL') > 0) {
-						const runways = sentence.match(/[0-9][0-9]?[LRC]?/g);
-						runways.forEach((runway) => {
-							approaches.push('VIS ' + runway);
-						});
-					} else if(sentence.indexOf('ILS') > 0) {
-						const runways = sentence.match(/[0-9][0-9]?[LRC]?/g);
-						runways.forEach((runway) => {
-							approaches.push('ILS ' + runway);
-						});
-					} else if(sentence.indexOf('RNAV') > 0) {
-						const runways = sentence.match(/[0-9][0-9]?[LRC]?/g);
-						runways.forEach((runway) => {
-							approaches.push('RNAV ' + runway);
-						});
-					}
-				}
-				return approaches.join(', ');
-			} else {
-				return '—';
-			}
 		}
 	}
 }

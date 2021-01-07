@@ -1,12 +1,17 @@
 <template>
-	<div class="row">
-		<div class="col s12">
+	<div class="row top">
+		<div class="col s12 xl8">
 			<div class="map_wrapper">
 				<Map />
 			</div>
 		</div>
+		<div class="col s12 xl4">
+			<div class="status_wrapper">
+				<Status />
+			</div>
+		</div>
 	</div>
-	<div class="row">
+	<div class="row bottom">
 		<div class="col s12 xl6 push-xl6">
 			<div class="atis_wrapper">
 				<Atis />
@@ -24,29 +29,46 @@
 import Map from '@/components/Map.vue';
 import Atis from '@/components/Atis.vue';
 import Pirep from '@/components/Pirep.vue';
+import Status from '@/components/Status.vue';
 
 export default {
 	name: 'Home',
 	components: {
 		Map,
 		Atis,
-		Pirep
+		Pirep,
+		Status
 	}
 };
 </script>
 
 <style scoped lang="scss">
-.map_wrapper {
+
+.top {
+	height: 60%;
+}
+
+.bottom {
+	height: 40%;
+}
+
+.col {
+	height: 100%;
+}
+
+.map_wrapper, .status_wrapper {
 	padding: 1em;
 	width: 100%;
-	height: 60vh;
+	height: 100%;
 	border-radius: 10px;
+	box-sizing: border-box;
 }
 
 .atis_wrapper, .pirep_wrapper {
 	padding: 1em;
 	width: 100%;
-	height: 35vh;
+	height: 100%;
+	box-sizing: border-box;
 
 	::-webkit-scrollbar {
 		width: 5px;

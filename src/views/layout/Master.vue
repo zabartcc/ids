@@ -4,10 +4,8 @@
 			<Header />
 		</header>
 		<main>
-			<div class="row main-content wrapper">
-				<div class="main_content col s12">
-					<router-view></router-view>
-				</div>
+			<div class="row main_content">
+				<router-view></router-view>
 			</div>
 		</main>
 		<footer>
@@ -32,10 +30,16 @@ export default {
 #container {
 	display: flex;
 	flex-direction: column;
-	min-height: 100vh;
+	height: 100vh;
 
-	.main-content {
+	main {
+		padding: 1em 0;
+		flex: 1;
+	}
+
+	.main_content {
 		margin: 0!important;
+		height: 100%;
 	}
 }
 
