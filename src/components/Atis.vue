@@ -96,13 +96,13 @@ export default {
 			localStorage.setItem('atis_stations', JSON.stringify(Object.keys(this.userStations)));
 		},
 		addStation() {
-			console.log(this.atisInput)
 			const station = this.atisInput.toUpperCase();
 			if(Object.keys(this.allStations).includes(station)) {
 				this.userStations[station] = this.allStations[station];
 			}
 			localStorage.setItem('atis_stations', JSON.stringify(Object.keys(this.userStations)));
 			this.newAtis = !this.newAtis;
+			this.atisInput = '';
 		},
 		// async addStation() {
 		// 	if(this.addedStations.indexOf(this.atisInput.toUpperCase()) === -1) {

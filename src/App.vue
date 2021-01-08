@@ -12,6 +12,11 @@ body {
 	color: #fff;
 }
 
+.tooltip-content {
+	font-family: "Lucida Console", "Lucida Sans Typewriter", monaco;
+	font-size: .9rem;
+}
+
 ::-webkit-scrollbar {
 	width: 5px;
 	height: 5px;

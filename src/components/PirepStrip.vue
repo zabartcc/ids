@@ -3,7 +3,7 @@
 		<div class="col s1 center-align">{{info.urgent ? 'UUA' : 'UA'}}</div>
 		<div class="col s1 center-align">{{info.location || '—'}}</div>
 		<div class="col s1 center-align">{{getTime(info.reportTime)}}</div>
-		<div class="col s1 center-align">{{info.flightLevel ?? '—'}}</div>
+		<div class="col s1 center-align">{{info.flightLevel || '—'}}</div>
 		<div class="col s1 center-align">{{info.aircraft || '—'}}</div>
 		<div class="col s1 center-align">{{info.skyCond || '—'}}</div>
 		<div class="col s1 center-align">{{info.vis || '—'}}</div>
@@ -11,7 +11,7 @@
 		<div class="col s1 center-align">{{info.wind || '—'}}</div>
 		<div class="col s2 center-align">{{info.turbulence || '—'}}</div>
 		<div class="col s1 center-align">{{info.icing || '—'}}</div>
-		<div class="info">
+		<div class="col s12 info">
 			Reported {{observedTime(info.reportTime)}} | Expires in {{expireTime(info.reportTime)}} <span v-if="info.manual"> | <span class="delete_pirep" @click="deletePirep(info._id)">Delete</span></span>
 		</div>
 	</div>
@@ -102,9 +102,10 @@ export default {
 		.info {
 			font-size: .65rem;
 			color: #6C6C6C;
-			margin-left: 1em;
-			margin-top: 20px;
-			display: inline-block;
+			display: block;
+			width: 100%;
+			text-transform: none;
+			margin-top: 1em;
 
 			.delete_pirep {
 				user-select: none;

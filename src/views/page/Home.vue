@@ -1,9 +1,9 @@
 <template>
 	<div class="row top">
 		<div class="col s12 xl8">
-			<div class="map_wrapper">
-				<Map />
-			</div>
+				<div class="map_wrapper">
+					<Map />
+				</div>
 		</div>
 		<div class="col s12 xl4">
 			<div class="status_wrapper">
@@ -33,23 +33,23 @@ import Status from '@/components/Status.vue';
 
 export default {
 	name: 'Home',
+	data() {
+		return {
+		};
+	},
 	components: {
 		Map,
 		Atis,
 		Pirep,
-		Status
+		Status,
 	}
 };
 </script>
 
 <style scoped lang="scss">
 
-.top {
-	height: 60%;
-}
-
 .bottom {
-	height: 40%;
+	height: 35vh;
 }
 
 .col {
@@ -59,9 +59,13 @@ export default {
 .map_wrapper, .status_wrapper {
 	padding: 1em;
 	width: 100%;
-	height: 100%;
+	height: 50vh;
 	border-radius: 10px;
 	box-sizing: border-box;
+}
+
+.status_wrapper {
+	height: auto;
 }
 
 .atis_wrapper, .pirep_wrapper {

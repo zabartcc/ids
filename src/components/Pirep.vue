@@ -10,14 +10,14 @@
 		</div>
 		<div class="pirep_table">
 			<div class="table_header row">
-				<div class="col s1"><span class="tooltipped" data-tooltip="Urgent">(U)UA</span></div>
+				<div class="col s1"><span class="tooltipped" data-tooltip="Urgency">(U)UA</span></div>
 				<div class="col s1"><span class="tooltipped" data-tooltip="Location">/OV</span></div>
 				<div class="col s1"><span class="tooltipped" data-tooltip="Time (z)">/TM</span></div>
 				<div class="col s1"><span class="tooltipped" data-tooltip="Flight Level">/FL</span></div>
 				<div class="col s1"><span class="tooltipped" data-tooltip="Type">/TP</span></div>
 				<div class="col s1"><span class="tooltipped" data-tooltip="Sky Conditions">/SK</span></div>
 				<div class="col s1"><span class="tooltipped" data-tooltip="Visibility">/WX</span></div>
-				<div class="col s1"><span class="tooltipped" data-tooltip="Temperature">/TA</span></div>
+				<div class="col s1"><span class="tooltipped" data-tooltip="Temperature (C)">/TA</span></div>
 				<div class="col s1"><span class="tooltipped" data-tooltip="Wind">/WV</span></div>
 				<div class="col s2"><span class="tooltipped" data-tooltip="Turbulence">/TB</span></div>
 				<div class="col s1"><span class="tooltipped" data-tooltip="Icing">/IC</span></div>
@@ -127,7 +127,7 @@ export default {
 
 	.pirep_table {
 		overflow: auto;
-		min-height: 90%;
+		min-height: 89%;
 		width: 100%;
 
 		.table_header {

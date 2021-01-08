@@ -146,7 +146,7 @@
 			<l-marker v-for="(plane, callsign) in aircraft" :lat-lng="[+plane.lat, +plane.lng]" :key="callsign">
 				<l-icon :icon-url="require('@/assets/images/icons/diamond.png')" :icon-size="[12, 12]" :tooltipAnchor="[50,20]" />
 				<l-polyline :lat-lngs="[[plane.lat, plane.lng], newCoord(+plane.lat, +plane.lng, plane.speed, plane.heading)]" color="#C8C806" className="p_track" />
-				<l-tooltip :options="{permanent: true, sticky: true, offset: ([5,30])}">{{plane.callsign}}<br />{{calcAltitude(plane.altitude, plane.cruise)}}<br />999 {{('000' + plane.speed).slice(-3)}}<br /><span class="acft_destination">{{plane.dest}}</span></l-tooltip>
+				<l-tooltip :options="{permanent: true, sticky: true, offset: ([5,30])}">{{plane.callsign}}<br />{{calcAltitude(plane.altitude, plane.cruise)}}<br />412 {{('000' + plane.speed).slice(-3)}}<br /><span class="acft_destination">{{plane.dest}}</span></l-tooltip>
 			</l-marker>
 		</l-map>
 	</div>
@@ -254,7 +254,7 @@ export default {
 		font-size: .9rem;
 		opacity: 0.9;
 		box-shadow: none;
-		line-height: 1rem;
+		line-height: 0.95rem;
 		font-family: "ERAM";
 
 		&:before {

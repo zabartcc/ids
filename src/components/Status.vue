@@ -60,12 +60,11 @@ export default {
 		overflow: auto;
 		background-color: #0F0F0F;
 		border-radius: 15px;
-		padding: .75em;
 		font-family: "Lucida Console", "Lucida Sans Typewriter", monaco;
 	}
 
 	.title {
-		font-size: 1.25em;
+		padding: .5em 1em .33em 1em;
 	}
 
 	.status_section_title {
@@ -80,6 +79,7 @@ export default {
 	}
 
 	.artcc_grid {
+		padding: 0 .75em .75em .75em;
 		display: grid;
 		grid-template-rows: repeat(3, 1fr);
 		grid-template-columns: repeat(4, 1fr);
