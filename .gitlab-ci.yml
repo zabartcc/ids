@@ -1,5 +1,5 @@
 variables:
-  VUE_APP_VERSION_ID: '0.10.0-$CI_COMMIT_SHORT_SHA'
+  VUE_APP_VERSION_ID: '0.10.2-$CI_COMMIT_SHORT_SHA'
 
 stages:
   - build

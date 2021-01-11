@@ -141,22 +141,37 @@
 				:weight=1
 			/> <!-- NE Sector -->
 			<l-wms-tile-layer baseUrl="https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi" layers="nexrad-n0r-900913" :transparent="true" format="image/png" :opacity="0.3" :z-index="100"></l-wms-tile-layer>
-			
+
 			<!-- Dynamically draw planes on map here -->
 			<l-marker v-for="(plane, callsign) in aircraft" :lat-lng="[+plane.lat, +plane.lng]" :key="callsign">
 				<l-icon :icon-url="require('@/assets/images/icons/diamond.png')" :icon-size="[12, 12]" :tooltipAnchor="[50,20]" />
 				<l-polyline :lat-lngs="[[plane.lat, plane.lng], newCoord(+plane.lat, +plane.lng, plane.speed, plane.heading)]" color="#C8C806" className="p_track" />
-				<l-tooltip :options="{permanent: true, sticky: true, offset: ([5,30])}">{{plane.callsign}}<br />{{calcAltitude(plane.altitude, plane.cruise)}}<br />412 {{('000' + plane.speed).slice(-3)}}<br /><span class="acft_destination">{{plane.dest}}</span></l-tooltip>
+				<l-tooltip v-if="showDatablock === true" :options="{permanent: true, sticky: true, offset: ([5,30])}">{{plane.callsign}}<br />{{calcAltitude(plane.altitude, plane.cruise)}}<br />412 {{('000' + plane.speed).slice(-3)}}<br /><span class="acft_destination">{{plane.destination}}</span></l-tooltip>
 			</l-marker>
 		</l-map>
+		<div class="map_controls">
+			<div class="pt">
+				<i class="material-icons tooltipped" data-tooltip="Projected Track Length">swap_horiz</i>
+				<span class="control_divider"></span>
+				<i class="material-icons clickable" @click="decreasePt">chevron_left</i>{{pt}} min<i class="material-icons clickable" @click="increasePt">chevron_right</i>
+			</div>
+			<div class="db">
+				<i class="material-icons tooltipped" data-tooltip="Hide Data Blocks" v-show="showDatablock === true">visibility_off</i>
+				<i class="material-icons tooltipped" data-tooltip="Show Data Blocks" v-show="showDatablock === false">visibility</i>
+				<span class="control_divider"></span>
+				<span class="clickable" v-if="showDatablock === false" @click="showDatablock = true">&nbsp;Show</span>
+				<span class="clickable" v-else @click="showDatablock = false">&nbsp;Hide</span>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script>
-import { LMap, LTileLayer, LPolygon, LWmsTileLayer, LMarker, LIcon, LPolyline,LTooltip } from "@vue-leaflet/vue-leaflet";
+import {LMap, LTileLayer, LPolygon, LWmsTileLayer, LMarker, LIcon, LPolyline, LTooltip} from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
-import { mapActions } from 'vuex';
+import {mapActions} from 'vuex';
 import {zabApi} from '@/helpers/axios.js';
+import M from 'materialize-css';
 
 export default {
 	name: 'Map',
@@ -177,12 +192,18 @@ export default {
 			sse: null,
 			aircraft: {},
 			zoom: 6,
+			pt: 4,
+			showDatablock: true
 		}
 	},
 	async mounted() {
+		M.Tooltip.init(document.querySelectorAll('.tooltipped'), {
+			margin: 0,
+			position: 'top'
+		});
 		await this.initAircraft();
-		this.sse = new EventSource(`${process.env.VUE_APP_API_URL}/ids/aircraft/feed`)
-		this.sse.onmessage = this.handleAircraftUpdate
+		this.sse = new EventSource(`${process.env.VUE_APP_API_URL}/ids/aircraft/feed`);
+		this.sse.onmessage = this.handleAircraftUpdate;
 	},
 	methods: {
 		async initAircraft() {
@@ -190,7 +211,7 @@ export default {
 			for(const callsign of allAircraft) {
 				this.getAircraftData(callsign);
 			}
-			this.setTimestamp(Date.now())
+			this.setTimestamp(Date.now());
 		},
 		async getAircraftData(callsign) {
 			this.aircraft[callsign] = (await zabApi.get(`/ids/aircraft/${callsign}`)).data;
@@ -203,11 +224,11 @@ export default {
 			if(data.type == "delete") {
 				delete this.aircraft[data.callsign];
 			}
-			this.setTimestamp(Date.now())
+			this.setTimestamp(Date.now());
 		},
 		newCoord(long, lat, speed, heading) {
 			const radian = heading * (Math.PI / 180);
-			const d = ((speed / 60) * 4) * 1.15078; // speed to miles (PT length: 4 min)
+			const d = ((speed / 60) * this.pt) * 1.15078; // speed to miles (PT length: 4 min by default)
 			const dy = Math.cos(radian) * d;
 			const dx = Math.sin(radian) * d;
 			const coordY = long + (dy / 69.096); // 69.096: one degree of longitude
@@ -223,10 +244,24 @@ export default {
 				return `${cruiseString}C`;
 			}
 			if(cruiseAbbv > altAbbv) {
-				return `${cruiseString}-${altString}`
+				return `${cruiseString}-${altString}`;
 			}
 			if(cruiseAbbv < altAbbv) {
-				return `${cruiseString}+${altString}`
+				return `${cruiseString}+${altString}`;
+			}
+		},
+		decreasePt() {
+			if(this.pt !== 1) {
+				this.pt = (this.pt / 2);
+			} else {
+				return;
+			}
+		},
+		increasePt() {
+			if(this.pt !== 8) {
+				this.pt = (this.pt * 2);
+			} else {
+				return;
 			}
 		},
 		...mapActions('timer', [
@@ -271,5 +306,49 @@ export default {
 		a {
 			display: none;
 		}
+	}
+
+	.material-icons{
+		display: inline-flex;
+		vertical-align: top;
+	}
+
+	.map_controls {
+		width: 100%;
+		background: rgb(9, 9, 9);
+		border-bottom-left-radius: 15px;
+		border-bottom-right-radius: 15px;
+		padding: 0 1em;
+		display: flex;
+		flex-direction: row;
+		user-select: none;
+		font-family: "Lucida Console", "Lucida Sans Typewriter", monaco;
+
+		.control_divider {
+			border-right: 1px solid #3C3C3C;
+			margin-left: 7px;
+			margin-right: 2px;
+		}
+
+		.pt {
+			line-height: 1.7em;
+			width: 160px;
+		}
+
+		.db {
+			line-height: 1.7em;
+			i {
+				line-height: 1.3em;
+				font-size: 1.3em;
+			}
+		}
+
+		.clickable {
+			cursor: pointer;
+		}
+	}
+
+	.material-tooltip {
+		background-color: #1E1E1E!important;
 	}
 </style>

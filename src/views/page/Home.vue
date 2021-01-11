@@ -94,4 +94,15 @@ export default {
 		background-color: transparent;
 	}
 }
+
+@media only screen and (max-width: 1200px) {
+	.status_wrapper {
+		margin-top: 1.75em;
+	}
+
+	.top {
+		margin-bottom: 0;
+	}
+}
+
 </style>
