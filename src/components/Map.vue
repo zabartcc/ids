@@ -333,12 +333,18 @@ export default {
 		.pt {
 			line-height: 1.7em;
 			width: 160px;
+
+			i {
+				&.clickable {
+					line-height: 1.6rem;
+				}
+			}
 		}
 
 		.db {
 			line-height: 1.7em;
 			i {
-				line-height: 1.3em;
+				line-height: 1.6rem;
 				font-size: 1.3em;
 			}
 		}

@@ -21,12 +21,11 @@ body {
 	width: 5px;
 	height: 5px;
 	margin-top: 10px;
-	background-color: #121212;
+	background-color: #0F0F0F;
 }
 
 ::-webkit-scrollbar-track {
-	margin-top: 10px;
-	margin-bottom: 10px;
+	margin-bottom: 28px;
 	border-radius: 10px;
 	background-color: #121212;
 }

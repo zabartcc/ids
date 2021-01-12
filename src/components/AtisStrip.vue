@@ -45,7 +45,7 @@
 						<div class="col s6">
 							WIND
 							<span class="display">
-								{{('00' + parsedMetar.wind.direction).slice(-3)}}   {{('0' + parsedMetar.wind.speedKt).slice(-2)}} <span v-if="parsedMetar.wind.gust">G{{parsedMetar.wind.gust}}</span>
+								{{('00' + parsedMetar.wind.direction).slice(-3)}} {{('0' + parsedMetar.wind.speedKt).slice(-2)}}<span v-if="parsedMetar.wind.gust">G{{parsedMetar.wind.gust}}</span>
 							</span>
 						</div>
 					</div>
