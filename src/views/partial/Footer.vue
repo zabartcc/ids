@@ -35,11 +35,10 @@ export default {
 	background-color: #0F0F0F;
 	padding: .4em 2em;
 	font-size: .80rem;
-	position: fixed;
-	width: 100vw;
-	bottom: 0;
 	color: #6C6C6C;
 	display: flex;
+	align-items: center;
+	height: 28px;
 
 	.info {
 		color: #6C6C6C;

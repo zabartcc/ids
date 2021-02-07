@@ -21,9 +21,11 @@
     "axios": "^0.21.1",
     "core-js": "^3.8.2",
     "electron-updater": "^4.3.5",
+    "electron-window-state": "^5.0.3",
     "leaflet": "^1.7.1",
     "materialize-css": "^1.0.0",
     "metar-parser": "^1.0.0",
+    "mount-vue-component": "^0.9.5",
     "vue": "^3.0.3",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"

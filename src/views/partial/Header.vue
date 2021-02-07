@@ -46,6 +46,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
 	data() {
 		return {
@@ -57,6 +59,12 @@ export default {
 			document.getElementById('zulu_time').innerHTML = new Date().toLocaleString('en-US', {timeZone: 'UTC', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'}) + 'Z';
 			document.getElementById('local_time').innerHTML = new Date().toLocaleString('en-US', {timeZone: 'America/Phoenix', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'}) + 'L';
 		}, 1000);
+		this.setTimestamp(Date.now());
+	},
+	methods: {
+		...mapActions('timer', [
+			'setTimestamp'
+		]),
 	}
 };
 </script>
