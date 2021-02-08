@@ -6,7 +6,7 @@
 					Controller
 				</div>
 				<div class="text">
-					{{getUser()}}
+					{{controllerName}}
 				</div>
 			</div>
 			<div class="bar">
@@ -46,23 +46,22 @@
 </template>
 
 <script>
+import {mapState} from 'vuex';
 export default {
-	props: ['user'],
 	async mounted() {
 		setInterval(() => {
 			document.getElementById('zulu_time').innerHTML = new Date().toLocaleString('en-US', {timeZone: 'UTC', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'});
 			document.getElementById('local_time').innerHTML = new Date().toLocaleString('en-US', {timeZone: 'America/Phoenix', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'});
 		}, 1000);
 	},
-	methods: {
-		getUser() {
-			if(this.user) {
-				return `${this.user.fname} ${this.user.lname}`
-			} else {
-				return '—'
-			}
+	computed: {
+		...mapState('user', [
+			'user'
+		]),
+		controllerName() {
+			return `${this.$store.state.user.user.data ? this.$store.state.user.user.data.fname + ' ' + this.$store.state.user.user.data.lname : '-'}`;
 		}
-	}
+	},
 };
 </script>
 
@@ -70,7 +69,6 @@ export default {
 	.header {
 		padding: .5em 1em;
 		background-color: #0F0F0F;
-		
 	}
 
 	.flex {
@@ -89,7 +87,6 @@ export default {
 			color: #6C6C6C;
 			font-size: .8em;
 		}
-
 		.text {
 			font-size: 1.5em;
 			font-weight: 600;

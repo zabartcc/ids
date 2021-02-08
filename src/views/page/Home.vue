@@ -41,7 +41,7 @@ export default {
 		Map,
 		Atis,
 		Pirep,
-		Status,
+		Status
 	}
 };
 </script>

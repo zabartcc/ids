@@ -1,7 +1,7 @@
 <template>
 	<div id="container">
 		<header>
-			<Header :user="user" />
+			<Header />
 		</header>
 		<main>
 			<div class="row main_content">
@@ -12,77 +12,25 @@
 			<Footer />
 		</footer>
 	</div>
-	<div ref="settings_wrap" class="settings_wrap" v-show="showSettings">
-		<form>
-			<h6>Settings</h6>
-			<div class="input-field">
-				<input id="token" type="text" v-model=settings.token>
-				<label for="token">Token</label>
-				<button class="btn waves-effect" @click.prevent=updateSettings>Update</button>
-			</div>
-		</form>
-	</div>
 </template>
 
 <script>
 import Header from '@/views/partial/Header.vue';
 import Footer from '@/views/partial/Footer.vue';
-import {zabApi} from '@/helpers/axios.js';
-import M from 'materialize-css';
+import {mapActions} from 'vuex';
 
 export default {
 	components: {
 		Header,
 		Footer
 	},
-	data() {
-		return {
-			showSettings: false,
-			settings: {
-				token: '',
-			},
-			user: null
-		}
-	},
-	async mounted() {
-		if(localStorage.getItem('settings')) {
-			this.settings = JSON.parse(localStorage.getItem('settings'));
-		}
-
-		await this.getUserData();
-
-		M.updateTextFields();
-
-		window.addEventListener('keydown', e => {
-			// console.log(e.key)
-			if(e.ctrlKey && e.key === 's') {
-				this.showSettings = true;
-				e.preventDefault();
-				e.stopImmediatePropagation();
-			}
-
-			if(e.key === "Escape") {
-				this.showSettings = false;
-				e.preventDefault();
-				e.stopImmediatePropagation();
-			}
-		});
+	async created() {
+		await this.getData();
 	},
 	methods: {
-		updateSettings: async function() {
-			localStorage.setItem('settings', JSON.stringify(this.settings));
-			await this.getUserData();
-		},
-		getUserData: async function() {
-			if(this.settings.token) {
-				const {data} = await zabApi.post('/ids/user', {token: this.settings.token});
-				if(data.ret_det.code === 200) {
-					this.user = data.data;
-				} else {
-					this.user = null;
-				}
-			}
-		}
+		...mapActions('user', [
+			'getData'
+		]),
 	}
 };
 </script>

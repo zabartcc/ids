@@ -140,7 +140,7 @@
 				color="#888888"
 				:weight=1
 			/> <!-- NE Sector -->
-			<l-wms-tile-layer baseUrl="https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi" layers="nexrad-n0r-900913" :transparent="true" format="image/png" :opacity="0.3" :z-index="100"></l-wms-tile-layer>
+			<l-wms-tile-layer baseUrl="https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi" layers="nexrad-n0r-900913" :transparent="true" format="image/png" :opacity="0.25" :z-index="100"></l-wms-tile-layer>
 
 			<!-- Dynamically draw planes on map here -->
 			<l-marker v-for="(plane, callsign) in aircraft" :lat-lng="[+plane.lat, +plane.lng]" :key="callsign">

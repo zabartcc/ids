@@ -38,4 +38,16 @@ body {
 ::-webkit-scrollbar-corner {
 	background-color: transparent;
 }
+
+.modal, .modal-footer {
+	background-color: rgb(30, 30, 30)!important;
+	
+	.btn-flat {
+		color: #fff;
+	}
+}
+
+.toast_error {
+	background: #D54234!important;
+}
 </style>
