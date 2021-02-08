@@ -42,8 +42,10 @@ export default {
 	methods: {
 		async getNeighbors() {
 			this.neighbors = (await zabApi.get('/ids/neighbors')).data;
-			document.querySelectorAll('.artcc_grid div[artcc]').forEach(artcc => artcc.removeAttribute('online'));
-			this.neighbors.forEach(neighbor => this.$refs[this.neighborMap[neighbor.toLowerCase()]].setAttribute('online', true));
+			if(this.neighbors.length) {
+				document.querySelectorAll('.artcc_grid div[artcc]').forEach(artcc => artcc.removeAttribute('online'));
+				this.neighbors.forEach(neighbor => this.$refs[this.neighborMap[neighbor.toLowerCase()]].setAttribute('online', true));
+			}
 			this.setTimestamp(Date.now())
 		},
 		...mapActions('timer', [

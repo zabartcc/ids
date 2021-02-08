@@ -6,7 +6,7 @@
 					Controller
 				</div>
 				<div class="text">
-					Ur Mom
+					{{getUser()}}
 				</div>
 			</div>
 			<div class="bar">
@@ -47,16 +47,21 @@
 
 <script>
 export default {
-	data() {
-		return {
-			
-		};
-	},
-	mounted() {
+	props: ['user'],
+	async mounted() {
 		setInterval(() => {
-			document.getElementById('zulu_time').innerHTML = new Date().toLocaleString('en-US', {timeZone: 'UTC', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'}) + 'Z';
-			document.getElementById('local_time').innerHTML = new Date().toLocaleString('en-US', {timeZone: 'America/Phoenix', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'}) + 'L';
+			document.getElementById('zulu_time').innerHTML = new Date().toLocaleString('en-US', {timeZone: 'UTC', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'});
+			document.getElementById('local_time').innerHTML = new Date().toLocaleString('en-US', {timeZone: 'America/Phoenix', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'});
 		}, 1000);
+	},
+	methods: {
+		getUser() {
+			if(this.user) {
+				return `${this.user.fname} ${this.user.lname}`
+			} else {
+				return '—'
+			}
+		}
 	}
 };
 </script>
