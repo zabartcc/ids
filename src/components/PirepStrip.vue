@@ -30,11 +30,12 @@ export default {
 	props: ['info'],
 	methods: {
 		async deletePirep(id) {
-			zabApi.delete(`/online/pireps/${id}`).then(async () => {
+			try {
+				await zabApi.delete(`/ids/pireps/${id}`);
 				this.visible = false;
-			}).catch((err) => {
-				console.log(err);
-			})
+			} catch(e) {
+				console.log(e);
+			}
 		},
 		getTime(time) {
 			if(time) {
@@ -86,31 +87,31 @@ export default {
 </script>
 
 <style scoped lang="scss">
-	#pirep_strip {
-		background-color: #1E1E1E;
-		margin-bottom: .5em;
-		padding: .5em 0;
-		border-radius: 5px;
-		overflow: auto;
-		width: 120%;
+#pirep_strip {
+	background-color: #1E1E1E;
+	margin-bottom: .5em;
+	padding: .5em 0;
+	border-radius: 5px;
+	overflow: auto;
+	width: 120%;
 
-		.col {
-			word-break: break-all;
-			text-transform: uppercase;
-		}
+	.col {
+		word-break: break-all;
+		text-transform: uppercase;
+	}
 
-		.info {
-			font-size: .65rem;
-			color: #6C6C6C;
-			display: block;
-			width: 100%;
-			text-transform: none;
-			margin-top: 1em;
+	.info {
+		font-size: .65rem;
+		color: #6C6C6C;
+		display: block;
+		width: 100%;
+		text-transform: none;
+		margin-top: 1em;
 
-			.delete_pirep {
-				user-select: none;
-				cursor: pointer;
-			}
+		.delete_pirep {
+			user-select: none;
+			cursor: pointer;
 		}
 	}
+}
 </style>

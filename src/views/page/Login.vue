@@ -3,21 +3,29 @@
 		<div class="login_container">
 			<div v-if="!loading">
 				<div class="top_text">
-					<img alt="ZAB logo" :src="require('@/assets/images/icons/zab_icon_new.png')" class="login_logo">
+					<img alt="ZAB logo" :src="require('@/assets/images/icons/zab_icon_new.png')" class="login_logo" draggable="false">
 					<p class="title">Albuquerque ARTCC — Information Display System</p>
 					<p class="description">
 						Welcome to the ZAB Information Display System (IDS). <br /><br />
-						This program provides a platform that shows information useful when controlling and gives you the ability to ease communications and coordination with other controllers. <br /><br />
-						Please enter your IDS token to continue. <br />
+						The IDS provides a platform that shows information useful when controlling, and gives you the ability to ease communications and coordination with other controllers. <br /><br />
+						Please enter your IDS token to continue as a member. Alternatively, you may continue as a guest with limited functionality. <br />
 					</p>
 				</div>
 				<div class="row">
-					<div class="col s12">
-						<input type="text" class="ids_token" v-model="token" />
+					<div class="col s12 m10">
+						<input type="text" class="ids_token" v-model="token" placeholder="Enter a token" />
 						<div class="help_text modal-trigger" data-target="modal_help">Where do I find my IDS token?</div>
 					</div>
-					<div class="col s12">
+					<div class="col s12 m2">
 						<button class="btn waves-effect login_button" @click="processLogin">Login</button>
+					</div>
+					<div class="col s12">
+						<div class="or">or</div>
+					</div>
+					<div class="col s12 center-align">
+						<span class="continue_as_guest" @click="continueAsGuest">
+							Continue as Guest
+						</span>
 					</div>
 				</div>
 			</div>
@@ -30,7 +38,9 @@
 		<div id="modal_help" class="modal">
 			<div class="modal-content">
 				<h4>Where do I find my IDS token?</h4>
-				<p>In order to generate an IDS token, please head over to the Albuquerque ARTCC website by visiting www.zabartcc.org<br /> <br />Once there, login and click on your name on the right side of the menu. A dropdown menu should now be visible. Click on the first option, Controller Dashboard.<br /><br />In the Controller Dashboard, you'll be able to see your IDS token. If none is present, click the refresh button to generate one. If your token ever gets comprimised, you can click on the refresh button to generate a new one. <br /><br />Please note that once you've generated a new token, your old token will no longer be valid.</p>
+				<p>
+					If you are a member of ZAB, you can generate an IDS token from the 'Controller Dashboard' on the Albuquerque ARTCC website.  If your token gets comprised, you can generate a new one.  Please note that your old token will no longer work once you've generated a new one. <br /><br />If you are not a member of ZAB, you can 'Continue as Guest' in order to access the IDS with limited functionality.
+				</p>
 			</div>
 			<div class="modal-footer">
 				<a class="modal-close waves-effect btn-flat">Close</a>
@@ -60,32 +70,50 @@ export default {
 		M.Modal.init(document.querySelectorAll('.modal'), {
 			preventScrolling: false
 		});
-		await this.checkToken();
+		await this.verifySession();
 	},
 	methods: {
 		...mapActions('user', [
 			'setData'
 		]),
-		async checkToken() {
-			const {data} = await zabApi.post('/ids/checktoken');
-			if(data.ret_det.code === 200) {
-				await this.setData(data.data);
+		async verifySession() {
+			this.loading = true;
+
+			if(localStorage.getItem('ids_token') !== null) {
+				await this.checkToken();
+			} else if(localStorage.getItem('guest') === 'true') {
 				this.$router.push('/home');
-			} else if(data.ret_det.code === 404) {
-				M.toast({
-					html: `<i class="material-icons left">error_outline</i> ${data.ret_det.message} <div class="border"></div>`,
-					displayLength: 5000,
-					classes: 'toast toast_error'
-				});
-				document.cookie = 'idsToken=; Max-Age=0; path=/;';
-				this.loading = false;
 			} else {
 				this.loading = false;
 			}
 		},
+		async checkToken() {
+			try {
+				const {data} = await zabApi.post('/ids/checktoken', {
+					token: localStorage.getItem('ids_token')
+				});
+				if(data.ret_det.code === 200) {
+					await this.setData(data.data);
+					this.$router.push('/home');
+				} else {
+					M.toast({
+						html: `<i class="material-icons left">error_outline</i> ${data.ret_det.message} <div class="border"></div>`,
+						displayLength: 5000,
+						classes: 'toast toast_error'
+					});
+					this.loading = false;
+				}
+			} catch(e) {
+				console.log(e);
+			}
+		},
 		async processLogin() {
-			document.cookie = `idsToken=${this.token}; max-age=86400; samesite=strict;`;
+			localStorage.setItem('ids_token', this.token);
 			await this.checkToken();
+		},
+		continueAsGuest() {
+			localStorage.setItem('guest', 'true');
+			this.$router.push('/home');
 		}
 	}
 }
@@ -117,18 +145,32 @@ export default {
 	}
 
 	.login_button {
-		display: block;
 		margin-top: 1.5em;
 		background-color: #D64437;
-		margin-left: auto;
-		margin-right: auto;
+	}
+
+	.or {
+		color: #6C6C6C;
+		text-align: center;
+		margin: 1em;
+	}
+
+	.continue_as_guest {
+		text-align: center;
+		color: #6C6C6C;
+		text-decoration: underline;
+		user-select: none;
+		cursor: pointer;
+		transition: .3s ease;
+
+		&:hover {
+			color: rgb(150, 150, 150);
+		}
 	}
 
 	.help_text  {
-		max-width: 400px;
-		margin-left: auto;
-		margin-right: auto;
 		margin-top: -7px;
+		margin-left: .75em;
 		cursor: pointer;
 		color: rgb(68, 68, 68);
 		font-size: .9rem;
@@ -136,25 +178,25 @@ export default {
 		text-decoration: underline;
 
 		&:hover {
-			color: rgb(78, 78, 78);
+			color: rgb(88, 88, 88);
 		}
 	}
 
 	.ids_token {
-		display: block;
 		border-bottom: none;
 		margin-top: 1em;
 		background: rgba(26, 26, 26, 0.9);
-		max-width: 400px;
 		border-radius: 7px;
-		margin-left: auto;
-		margin-right: auto;
 		padding-left: .5em;
 		color: #fff;
 
 		&:focus {
 			border: none!important;
 			box-shadow: none!important;
+		}
+
+		&::placeholder {
+			color: rgb(44, 44, 44);
 		}
 	}
 }
@@ -167,7 +209,7 @@ export default {
 	}
 
 	.description {
-		width: 70%;
+		width: 75%;
 		word-break: break-word;
 		margin: auto;
 		line-height: 1.3rem;

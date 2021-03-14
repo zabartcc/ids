@@ -4,7 +4,7 @@
 			<div class="title">
 				PIREPS
 			</div>
-			<div class="add">
+			<div :class="`add tooltipped ${$store.state.user.user.isLoggedIn ? '' : 'guest'}`" :data-tooltip="$store.state.user.user.isLoggedIn ? 'Add PIREP' : 'You must be logged in to do that'">
 				<i class="material-icons" @click="addNewPirepButton">add_box</i>
 			</div>
 		</div>
@@ -55,8 +55,6 @@ import M from 'materialize-css';
 
 export default {
 	name: 'Pireps',
-	props: {
-	},
 	components: {
 		PirepStrip,
 	},
@@ -69,31 +67,36 @@ export default {
 		}
 	},
 	async mounted() {
+		await this.getAllPireps();
 		M.Tooltip.init(document.querySelectorAll('.tooltipped'), {
 			margin: 0,
 			position: 'top'
 		});
-		await this.getAllPireps();
 		setInterval(this.getAllPireps, 120000); // Two minutes
 	},
 	methods: {
 		async getAllPireps() {
-			const {data} = await zabApi.get('/online/pireps');
+			const {data} = await zabApi.get('/ids/pireps');
 			this.pireps = data;
 		},
 		async submitNewPirep() {
-			zabApi.post('/online/pireps', this.newPirep).then(async () => {
+			try {
+				await zabApi.post('/ids/pireps', this.newPirep);
 				await this.getAllPireps();
 				this.newPirep = {};
 				this.addNewPirep = false;
-			}).catch((err) => {
-				console.log(err);
+			} catch(e) {
+				console.log(e);
 				this.newPirep = {};
 				this.addNewPirep = false;
-			})
+			}
 		},
 		addNewPirepButton() {
-			this.addNewPirep = true;
+			if(this.$store.state.user.user.isLoggedIn === true) {
+				this.addNewPirep = true;
+				const d = new Date(Date.now());
+				this.newPirep.tm = `${d.getUTCHours()}${d.getUTCMinutes()}`;
+			}
 		},
 		deleteNewPirep() {
 			this.newPirepContent = {};
@@ -104,110 +107,114 @@ export default {
 </script>
 
 <style scoped lang="scss">
-	#pireps {
-		height: 100%;
-		width: 100%;
-		background-color: #0F0F0F;
+#pireps {
+	height: 100%;
+	width: 100%;
+	background-color: #0F0F0F;
+	overflow: auto;
+	border-radius: 15px;
+	padding: 0;
+	font-family: "Lucida Console", "Lucida Sans Typewriter", monaco;
+}
+
+.top_bar {
+	width: 100%;
+	padding: .5em 1em .33em 1em;
+	.add {
+		float: right;
+		margin-top: -25px;
+		cursor: pointer;
+		user-select: none;
+	}
+}
+
+.pirep_table {
+	overflow: auto;
+	min-height: 89%;
+	width: 100%;
+
+	.table_header {
+		border-top: 1px solid #3C3C3C;
+		border-bottom: 1px solid #3C3C3C;
+		width: 120%;
 		overflow: auto;
-		border-radius: 15px;
-		padding: 0;
-		font-family: "Lucida Console", "Lucida Sans Typewriter", monaco;
+		padding: 0 1em 0 1.5em;
+
+		div {
+			font-size: .85rem;
+			text-align: center;
+			padding: .25em 0;
+			border-right: 1px solid #3C3C3C;
+		}
+
+		div:last-child {
+			border-right: 0;
+		}
+
+		.col {
+			span {
+				cursor: pointer;
+			}
+		}
 	}
 
-	.top_bar {
-		width: 100%;
-		padding: .5em 1em .33em 1em;
-		.add {
-			float: right;
-			margin-top: -25px;
+	.table_body {
+		padding: 0 .5em 0 1.5em;
+	}
+}
+
+.no_pirep {
+	font-size: .9rem;
+}
+
+.pirep_strip {
+	background-color: #1E1E1E;
+	margin-bottom: .5em;
+	padding: .5em 0;
+	border-radius: 5px;
+	overflow: auto;
+	width: 120%;
+
+	.col {
+		word-break: break-all;
+
+		input {
+			border: none;
+			background: #121212;
+			border-radius: 5px;
+			color: #fff;
+			font-family: inherit;
+			padding-left: .25em;
+			width: calc(100% - .25em);
+			text-transform: uppercase;
+			text-align: center;
+
+			&::placeholder {
+				color: #6C6C6C;
+				text-align: center;
+			}
+			
+		}
+		input[type=text]:focus {
+			border-bottom: none;
+			box-shadow: none;
+		}
+	}
+
+	.info {
+		font-size: .65rem;
+		color: #6C6C6C;
+		margin-left: 1em;
+		width: 240px;
+
+		span {
 			cursor: pointer;
 			user-select: none;
 		}
 	}
+}
 
-	.pirep_table {
-		overflow: auto;
-		min-height: 89%;
-		width: 100%;
-
-		.table_header {
-			border-top: 1px solid #3C3C3C;
-			border-bottom: 1px solid #3C3C3C;
-			width: 120%;
-			overflow: auto;
-			padding: 0 1em 0 1.5em;
-
-			div {
-				font-size: .85rem;
-				text-align: center;
-				padding: .25em 0;
-				border-right: 1px solid #3C3C3C;
-			}
-
-			div:last-child {
-				border-right: 0;
-			}
-
-			.col {
-				span {
-					cursor: pointer;
-				}
-			}
-		}
-
-		.table_body {
-			padding: 0 .5em 0 1.5em;
-		}
-	}
-
-	.no_pirep {
-		font-size: .9rem;
-	}
-
-	.pirep_strip {
-		background-color: #1E1E1E;
-		margin-bottom: .5em;
-		padding: .5em 0;
-		border-radius: 5px;
-		overflow: auto;
-		width: 120%;
-
-		.col {
-			word-break: break-all;
-
-			input {
-				border: none;
-				background: #121212;
-				border-radius: 5px;
-				color: #fff;
-				font-family: inherit;
-				padding-left: .25em;
-				width: calc(100% - .25em);
-				text-transform: uppercase;
-				text-align: center;
-
-				&::placeholder {
-					color: #6C6C6C;
-					text-align: center;
-				}
-				
-			}
-			input[type=text]:focus {
-				border-bottom: none;
-				box-shadow: none;
-			}
-		}
-
-		.info {
-			font-size: .65rem;
-			color: #6C6C6C;
-			margin-left: 1em;
-			width: 240px;
-
-			span {
-				cursor: pointer;
-				user-select: none;
-			}
-		}
-	}
+.guest {
+	cursor: default!important;
+}
 </style>

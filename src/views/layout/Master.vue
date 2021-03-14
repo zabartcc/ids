@@ -25,7 +25,7 @@ export default {
 		Footer
 	},
 	async created() {
-		await this.getData();
+		await this.getData(localStorage.getItem('ids_token'));
 	},
 	methods: {
 		...mapActions('user', [

@@ -4,7 +4,7 @@
 			<div class="title">
 				ATIS
 			</div>
-			<div class="add">
+			<div class="add tooltipped" data-tooltip="Add ATIS">
 				<i class="material-icons" @click="openAtis">add_box</i>
 			</div>
 			<div class="add_atis" v-show="newAtis">
