@@ -9,7 +9,7 @@ module.exports = {
 					"publish": {
 						"provider": "s3",
 						"bucket": "zabartcc/ids",
-						"endpoint": "sfo3.digitaloceanspaces.com",
+						"endpoint": "https://sfo3.digitaloceanspaces.com",
 						"channel": "latest"
 					}
 				}
