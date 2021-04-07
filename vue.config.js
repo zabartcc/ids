@@ -8,8 +8,8 @@ module.exports = {
 				"win": {
 					"publish": {
 						"provider": "s3",
-						"bucket": "ids",
-						"endpoint": "https://cdn.zabartcc.org",
+						"bucket": "zabartcc/ids",
+						"endpoint": "https://zabartcc.sfo3.digitaloceanspaces.com",
 						"channel": "latest"
 					}
 				}
