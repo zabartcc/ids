@@ -7,10 +7,11 @@ module.exports = {
 				"artifactName": "AlbuquerqueIDSInstall.${ext}",
 				"win": {
 					"publish": {
-						"provider": "s3",
-						"bucket": "zabartcc/ids",
-						"endpoint": "https://sfo3.digitaloceanspaces.com",
-						"channel": "latest"
+						"provider": "spaces",
+						"name": "zabartcc",
+						"region": "sfo3",
+						"channel": "latest",
+						"path": "/ids"
 					}
 				}
 			}
