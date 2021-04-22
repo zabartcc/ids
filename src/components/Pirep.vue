@@ -4,7 +4,7 @@
 			<div class="title">
 				PIREPS
 			</div>
-			<div :class="`add tooltipped ${$store.state.user.user.isLoggedIn ? '' : 'guest'}`" :data-tooltip="$store.state.user.user.isLoggedIn ? 'Add PIREP' : 'You must be logged in to do that'">
+			<div :class="`add tooltipped ${$store.state.user.user.isLoggedIn ? '' : 'guest'}`" :data-tooltip="$store.state.user.user.isLoggedIn ? 'Add PIREP' : 'Log in to add PIREPs'">
 				<i class="material-icons" @click="addNewPirepButton">add_box</i>
 			</div>
 		</div>
@@ -45,6 +45,9 @@
 				</div>
 			</div>
 		</div>
+		<div class="edit_overlay" v-if="editing">
+			<h2 class="component_name">PIREPS</h2>
+		</div>
 	</div>
 </template>
 
@@ -66,6 +69,7 @@ export default {
 			}
 		}
 	},
+	props: ['editing'],
 	async mounted() {
 		await this.getAllPireps();
 		M.Tooltip.init(document.querySelectorAll('.tooltipped'), {

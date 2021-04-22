@@ -67,13 +67,16 @@ export default {
 	methods: {
 		async getControllersOnline() {
 			try {
-				const {data} = await zabApi.get('/online');
 				this.online = null;
-				data.data.atc.forEach((atc) => {
-					if(atc.cid === this.user.data.cid) {
-						this.online = atc;
-					}
-				});
+
+				if(localStorage.getItem('guest') !== "true") {
+					const {data} = await zabApi.get('/online');
+					data.data.atc.forEach((atc) => {
+						if(atc.cid === this.user.data.cid) {
+							this.online = atc;
+						}
+					});
+				}
 			} catch(e) {
 				console.log(e);
 			}
@@ -108,6 +111,8 @@ export default {
 .header {
 	padding: .5em 1em;
 	background-color: #0F0F0F;
+	z-index: 999;
+	position: relative;
 }
 
 .flex {

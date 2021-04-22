@@ -7,8 +7,8 @@
 					<p class="title">Albuquerque ARTCC — Information Display System</p>
 					<p class="description">
 						Welcome to the ZAB Information Display System (IDS). <br /><br />
-						The IDS provides a platform that shows information useful when controlling, and gives you the ability to ease communications and coordination with other controllers. <br /><br />
-						Please enter your IDS token to continue as a member. Alternatively, you may continue as a guest with limited functionality. <br />
+						The IDS provides you with a platform that shows information useful when controlling, and eases communications and coordination with fellow controllers. <br /><br />
+						<span class="no_justify">Please enter your IDS token to continue as a member. Alternatively, you may continue as a guest with limited functionality.</span><br />
 					</p>
 				</div>
 				<div class="row">

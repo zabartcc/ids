@@ -5,11 +5,11 @@
 		</header>
 		<main>
 			<div class="row main_content">
-				<router-view></router-view>
+				<router-view :key="reloadKey"></router-view>
 			</div>
 		</main>
 		<footer>
-			<Footer />
+			<Footer @reload="reloadView" />
 		</footer>
 	</div>
 </template>
@@ -20,6 +20,11 @@ import Footer from '@/views/partial/Footer.vue';
 import {mapActions} from 'vuex';
 
 export default {
+	data() {
+		return {
+			reloadKey: 0
+		}
+	},
 	components: {
 		Header,
 		Footer
@@ -28,6 +33,9 @@ export default {
 		await this.getData(localStorage.getItem('ids_token'));
 	},
 	methods: {
+		reloadView() {
+			this.reloadKey++;
+		},
 		...mapActions('user', [
 			'getData'
 		]),
@@ -42,7 +50,6 @@ export default {
 	height: 100vh;
 
 	main {
-		padding: 1em 0;
 		flex: 1;
 	}
 

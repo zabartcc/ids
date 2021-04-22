@@ -3,7 +3,7 @@
 /* global __static */
 import { app, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
-import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import { autoUpdater } from 'electron-updater'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 import path from 'path';
@@ -23,6 +23,9 @@ async function createWindow() {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
 		nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+		nodeIntegrationInWorker: false,
+		nodeIntegrationInSubFrames: false,
+		contextIsolation: true,
 		webSecurity: false
 	},
 	icon: path.join(__static, 'icon.png')
@@ -42,7 +45,7 @@ async function createWindow() {
 
 app.commandLine.appendSwitch('proxy-serv')
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
 	protocol.registerFileProtocol('ids', (request, callback) => {
 		const url = request.url.substr(7)
 		callback({path: path.normalize(`${__dirname}/${url}`)})
@@ -71,15 +74,15 @@ app.on('ready', async () => {
 	setInterval(async () => { // check for updates every 60 seconds
 		autoUpdater.checkForUpdatesAndNotify();
 	}, 60000);
-  if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    try {
-      await installExtension(VUEJS_DEVTOOLS)
-    } catch (e) {
-      console.error('Vue Devtools failed to install:', e.toString())
-    }
-  }
-  createWindow()
+	if (isDevelopment && !process.env.IS_TEST) {
+		// Install Vue Devtools
+		try {
+			await installExtension(VUEJS3_DEVTOOLS)
+		} catch (e) {
+			console.error('Vue Devtools failed to install:', e.toString())
+		}
+	}
+	createWindow();
 })
 
 // Exit cleanly on request from parent process in development mode.

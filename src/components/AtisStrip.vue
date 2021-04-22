@@ -78,91 +78,102 @@ export default {
 </script>
 
 <style scoped lang="scss">
-	#atis-strip {
-		background-color: #1E1E1E;
-		min-width: 700px;
-		margin-bottom: .5em;
-		border-radius: 5px;
-		padding: .5em .5em 0 .5em;
-		font-family: inherit;
-		overflow: hidden;
+#atis-strip {
+	background-color: #1E1E1E;
+	min-width: 700px;
+	margin-bottom: .5em;
+	border-radius: 5px;
+	padding: .5em .5em 0 .5em;
+	font-family: inherit;
+	overflow: hidden;
 
-		.title {
-			padding: 0;
-		}
-
-		.row {
-			margin-bottom: 0;
-		}
-		
-		.border_bottom {
-			border-bottom: 1px solid #6C6C6C;
-			margin: 0;
-		}
-	}
-
-	.atis_code {
-		font-size: 2.5em;
-		font-weight: 700;
-		padding-left: 3%;
-		padding-top: 25px;
-		color: yellow;
-	}
-
-	.runways {
-		border-right: 1px solid #3C3C3C;
-		border-left: 1px solid #3C3C3C;
+	.title {
 		padding: 0;
-		font-size: .9em;
-
-		.runway_title, .runway_identifier {
-			padding: .2em;
-			border-bottom: 1px solid #3C3C3C;
-		}
-
-		.runway_identifier {
-			font-weight: 600;
-		}
-	}
-	.departing {
-		.runway_identifier {
-			border-bottom: 0;
-		}
 	}
 
-	.metar {
-		padding-top: .25em;
-		font-size: .85em;
-		border-top: 1px solid #3C3C3C;
-		padding-left: .75rem;
-		width: calc(100% - .33em);
-		margin: 0;
-	}
-
-	.display {
-		border: 1px solid yellow;
-		padding: .25em;
-		font-size: 1.3em;
-	}
-
-	.wind {
-		padding: .75rem;
-
-		.row {
-			margin-bottom: 0;
-		}
+	.row {
+		margin-bottom: 0;
 	}
 	
-	.weather {
+	.border_bottom {
+		border-bottom: 1px solid #6C6C6C;
 		margin: 0;
-		padding: 0;
 	}
-	
-	.delete_atis {
-		text-align: right;
-		padding: 0;
-		user-select: none;
-		cursor: pointer;
+}
+
+.atis_code {
+	font-size: 2.5em;
+	font-weight: 700;
+	padding-left: 3%;
+	padding-top: 25px;
+	color: yellow;
+
+	&.update {
+		animation-name: atisUpdate;
+		animation-duration: 2.5s;
+		animation-iteration-count: 3;
 	}
+}
+
+.runways {
+	border-right: 1px solid #3C3C3C;
+	border-left: 1px solid #3C3C3C;
+	padding: 0;
+	font-size: .9em;
+
+	.runway_title, .runway_identifier {
+		padding: .2em;
+		border-bottom: 1px solid #3C3C3C;
+	}
+
+	.runway_identifier {
+		font-weight: 600;
+	}
+}
+.departing {
+	.runway_identifier {
+		border-bottom: 0;
+	}
+}
+
+.metar {
+	padding-top: .25em;
+	font-size: .85em;
+	border-top: 1px solid #3C3C3C;
+	padding-left: .75rem;
+	width: calc(100% - .33em);
+	margin: 0;
+}
+
+.display {
+	border: 1px solid yellow;
+	padding: .25em;
+	font-size: 1.3em;
+}
+
+.wind {
+	padding: .75rem;
+
+	.row {
+		margin-bottom: 0;
+	}
+}
+
+.weather {
+	margin: 0;
+	padding: 0;
+}
+
+.delete_atis {
+	text-align: right;
+	padding: 0;
+	user-select: none;
+	cursor: pointer;
+}
+
+@keyframes atisUpdate {
+	0% { color: yellow; }
+	50% { color: white; }
+}
 
 </style>

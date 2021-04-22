@@ -16,6 +16,9 @@
 		<div class="atis_wrapper">
 			<AtisStrip v-for="station in userStations" :key=station.airport :info="station" />
 		</div>
+		<div class="edit_overlay" v-if="editing">
+			<h2 class="component_name">ATIS</h2>
+		</div>
 	</div>
 </template>
 
@@ -25,8 +28,7 @@ import {zabApi} from '@/helpers/axios.js';
 
 export default {
 	name: 'Atis',
-	props: {
-	},
+	props: ['editing'],
 	components: {
 		AtisStrip
 	},
@@ -128,70 +130,70 @@ export default {
 </script>
 
 <style scoped lang="scss">
-	#atis {
+#atis {
+	height: 100%;
+	width: 100%;
+	overflow: auto;
+	background-color: #0F0F0F;
+	border-radius: 15px;
+	padding: 0;
+	font-family: "Lucida Console", "Lucida Sans Typewriter", monaco;
+}
+
+.atis_wrapper {
+	padding: 0 1em .5em 1em;
+}
+.top_bar {
+	width: 100%;
+	padding: .5em 1em .33em 1em;
+	margin-bottom: 5px;
+	.add {
+		float: right;
+		margin-top: -25px;
+		cursor: pointer;
+		user-select: none;
+	}
+}
+
+.add_atis {
+	margin: 10px 0 0 px;
+	width: 200px;
+	height: 45px;
+	margin-top: -85px;
+	z-index: 500;
+	position: absolute;
+	right: 10px;
+	background: #0F0F0F;
+	padding: 5px;
+
+	&::before {
+		left: 145px;
+		content: "";
+		display: inline-block;
+		position: absolute;
+		width: 0;
+		height: 0;
+		bottom: -10px;
+		border-style: solid;
+		border-width: 0 10px 10px 10px;
+		border-color: transparent transparent #0F0F0F transparent;
+		transform: rotate(180deg);
+	}
+
+	.add_input {
+		background: #212121;
 		height: 100%;
 		width: 100%;
-		overflow: auto;
-		background-color: #0F0F0F;
-		border-radius: 15px;
-		padding: 0;
-		font-family: "Lucida Console", "Lucida Sans Typewriter", monaco;
+		border: none;
+		color: #fff;
+		outline: #121212;
+		padding-left: .25em;
+		font-size: 1.15rem;
+		font-family: inherit;
 	}
+}
 
-	.atis_wrapper {
-		padding: 0 1em .5em 1em;
-	}
-	.top_bar {
-		width: 100%;
-		padding: .5em 1em .33em 1em;
-		margin-bottom: 5px;
-		.add {
-			float: right;
-			margin-top: -25px;
-			cursor: pointer;
-			user-select: none;
-		}
-	}
-
-	.add_atis {
-		margin: 10px 0 0 px;
-		width: 200px;
-		height: 45px;
-		margin-top: -85px;
-		z-index: 500;
-		position: absolute;
-		right: 10px;
-		background: #0F0F0F;
-		padding: 5px;
-
-		&::before {
-			left: 145px;
-			content: "";
-			display: inline-block;
-			position: absolute;
-			width: 0;
-			height: 0;
-			bottom: -10px;
-			border-style: solid;
-			border-width: 0 10px 10px 10px;
-			border-color: transparent transparent #0F0F0F transparent;
-			transform: rotate(180deg);
-		}
-
-		.add_input {
-			background: #212121;
-			height: 100%;
-			width: 100%;
-			border: none;
-			color: #fff;
-			outline: #121212;
-			padding-left: .25em;
-			font-size: 1.15rem;
-			font-family: inherit;
-		}
-	}
-
-	.hidden {
-		display: none;
-	}
+.hidden {
+	display: none;
+}
 </style>

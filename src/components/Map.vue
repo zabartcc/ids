@@ -163,6 +163,9 @@
 				<span class="clickable" v-else @click="showDatablock = false">&nbsp;Hide</span>
 			</div>
 		</div>
+		<div class="edit_overlay" v-if="editing">
+			<h2 class="component_name">MAP</h2>
+		</div>
 	</div>
 </template>
 
@@ -175,8 +178,7 @@ import M from 'materialize-css';
 
 export default {
 	name: 'Map',
-	props: {
-	},
+	props: ['editing'],
 	components: {
 		LMap,
 		LTileLayer,
@@ -272,89 +274,101 @@ export default {
 </script>
 
 <style lang="scss">
-	@font-face {
-		font-family: "ERAM";
-		src: url('~@/assets/fonts/ERAM.ttf');
-		font-weight: 200;
-	}
-	#map {
-		height: 100%;
-		width: 100%;
-	}
+@font-face {
+	font-family: "ERAM";
+	src: url('~@/assets/fonts/ERAM.ttf');
+	font-weight: 200;
+}
 
-	.leaflet-popup-content-wrapper, .leaflet-tooltip {
-		background: transparent;
-		color: #C8C806;
+.leaflet-popup-content-wrapper, .leaflet-tooltip {
+	background: transparent;
+	color: #C8C806;
+	border: none;
+	font-size: .9rem;
+	opacity: 0.9;
+	box-shadow: none;
+	line-height: 0.95rem;
+	font-family: "ERAM";
+
+	&:before {
+		margin: 0;
 		border: none;
-		font-size: .9rem;
-		opacity: 0.9;
-		box-shadow: none;
-		line-height: 0.95rem;
-		font-family: "ERAM";
+	}
+}
 
-		&:before {
-			margin: 0;
-			border: none;
-		}
+.acft_destination {
+	opacity: 0.5;
+}
+
+.leaflet-control-attribution {
+	a {
+		display: none;
+	}
+}
+
+.leaflet-control-zoom {
+	display: none;
+}
+
+</style>
+
+<style scoped lang="scss">
+#map {
+	height: 100%;
+	width: 100%;
+}
+
+.material-icons {
+	display: inline-flex;
+	vertical-align: top;
+}
+
+.map_controls {
+	width: 100%;
+	background: rgb(9, 9, 9);
+	border-bottom-left-radius: 15px;
+	border-bottom-right-radius: 15px;
+	padding: 0 1em;
+	display: flex;
+	flex-direction: row;
+	user-select: none;
+	font-family: "Lucida Console", "Lucida Sans Typewriter", monaco;
+
+	.control_divider {
+		border-right: 1px solid #3C3C3C;
+		margin-left: 7px;
+		margin-right: 2px;
 	}
 
-	.acft_destination {
-		opacity: 0.5;
-	}
+	.pt {
+		line-height: 1.7em;
+		width: 160px;
 
-	.leaflet-control-attribution {
-		a {
-			display: none;
-		}
-	}
-
-	.material-icons{
-		display: inline-flex;
-		vertical-align: top;
-	}
-
-	.map_controls {
-		width: 100%;
-		background: rgb(9, 9, 9);
-		border-bottom-left-radius: 15px;
-		border-bottom-right-radius: 15px;
-		padding: 0 1em;
-		display: flex;
-		flex-direction: row;
-		user-select: none;
-		font-family: "Lucida Console", "Lucida Sans Typewriter", monaco;
-
-		.control_divider {
-			border-right: 1px solid #3C3C3C;
-			margin-left: 7px;
-			margin-right: 2px;
-		}
-
-		.pt {
-			line-height: 1.7em;
-			width: 160px;
-
-			i {
-				&.clickable {
-					line-height: 1.6rem;
-				}
-			}
-		}
-
-		.db {
-			line-height: 1.7em;
-			i {
+		i {
+			&.clickable {
 				line-height: 1.6rem;
-				font-size: 1.3em;
 			}
 		}
+	}
 
-		.clickable {
-			cursor: pointer;
+	.db {
+		line-height: 1.7em;
+		i {
+			line-height: 1.6rem;
+			font-size: 1.3em;
 		}
 	}
 
-	.material-tooltip {
-		background-color: #1E1E1E!important;
+	.clickable {
+		cursor: pointer;
 	}
+}
+
+.material-tooltip {
+	background-color: #1E1E1E!important;
+}
+
+.edit_overlay {
+	height: 100%;
+}
 </style>

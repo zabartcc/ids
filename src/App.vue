@@ -1,5 +1,5 @@
 <template>
-  <router-view/>
+	<router-view/>
 </template>
 
 <style lang="scss">
@@ -10,6 +10,7 @@ body {
 	background-color: #121212;
 	font-family: "Lato", sans-serif!important;
 	color: #fff;
+	overflow-x: hidden;
 }
 
 .tooltip-content {
@@ -20,12 +21,12 @@ body {
 ::-webkit-scrollbar {
 	width: 5px;
 	height: 5px;
-	margin-top: 10px;
 	background-color: #0F0F0F;
 }
 
 ::-webkit-scrollbar-track {
-	margin-bottom: 28px;
+	margin-bottom: 25px;
+	margin-top: 22px;
 	border-radius: 10px;
 	background-color: #121212;
 }
@@ -47,7 +48,22 @@ body {
 	}
 }
 
-.toast_error {
-	background: #D54234!important;
+.edit_overlay {
+	position: absolute;
+	height: calc(100% - 2em);
+	width: calc(100% - 2em);
+	top: 1em;
+	left: 1em;
+	background: rgba(15, 15, 15, 0.80);
+	backdrop-filter: blur(5px);
+	z-index: 999;
+	border-radius: 15px;
+
+	.component_name {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -100%);
+	}
 }
 </style>

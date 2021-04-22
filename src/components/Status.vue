@@ -14,6 +14,9 @@
 				<div ref="mmtz" artcc="mmtz">MMTZ</div>
 			</div>
 		</div>
+		<div class="edit_overlay" v-if="editing">
+			<h2 class="component_name">STATUS</h2>
+		</div>
 	</div>
 </template>
 
@@ -35,6 +38,7 @@ export default {
 			}
 		}
 	},
+	props: ['editing'],
 	async mounted() {
 		await this.getNeighbors();
 		setInterval(this.getNeighbors, 60000);
