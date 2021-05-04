@@ -17,21 +17,21 @@ async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
     minWidth: 900,
-	minHeight: 800,
-	title: "Albuquerque ARTCC - Information Display System",
+    minHeight: 800,
+    title: "Albuquerque ARTCC - Information Display System",
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-		nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-		nodeIntegrationInWorker: false,
-		nodeIntegrationInSubFrames: false,
-		contextIsolation: true,
-		webSecurity: false
-	},
-	icon: path.join(__static, 'icon.png')
-  })
-  win.setMenuBarVisibility(false)
+      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+      nodeIntegrationInWorker: false,
+      nodeIntegrationInSubFrames: false,
+      contextIsolation: true,
+      webSecurity: false
+    },
+    icon: path.join(__static, 'icon.png')
+  });
 
+  win.setMenuBarVisibility(false)
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
