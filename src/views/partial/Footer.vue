@@ -41,17 +41,26 @@
 	</div>
 </template>
 
-<script>
-import {mapState, mapActions} from 'vuex';
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { mapState, mapActions } from 'vuex';
+// @ts-ignore
 import M from 'materialize-css';
+// @ts-ignore
 import eventBus from '@/assets/js/eventBus.js';
 
-export default {
+interface State {
+	version: string | undefined;
+	componentsSet: Array<Object>;
+	editing: boolean;
+};
+
+export default defineComponent({
 	name: 'Footer',
-	data() {
+	data(): State {
 		return {
 			version: process.env.VUE_APP_VERSION_ID,
-			componentsSet: null,
+			componentsSet: [],
 			editing: false
 		};
 	},
@@ -59,9 +68,12 @@ export default {
 	async mounted() {
 		setInterval(() => {
 			const secondsPassed = Math.ceil((Date.now() - this.timestamp) / 1000)
-			document.getElementById('show_time').innerHTML = (secondsPassed > 500 ? '...' : secondsPassed);
+			if(document !== null) {
+				// @ts-ignore
+				document.getElementById('show_time').innerHTML = (secondsPassed > 500 ? '...' : secondsPassed.toString());
+			}
 		}, 1000);
-
+		// @ts-ignore
 		this.$nextTick(() => { 
 			M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'), {
 				alignment: 'right',
@@ -74,26 +86,28 @@ export default {
 		this.componentsSet = this.components;
 	},
 	methods: {
-		toggleEditing() {
+		toggleEditing(): void {
 			this.editing === true ? this.editing = false : this.editing = true;
 			eventBus.$emit('editToggle', this.editing);
 		},
-		toggleComponent(name) {
+		toggleComponent(name: string): void {
 			const component = localStorage.getItem(`${name}Component`);
 
 			if(component !== null) {
 				const json = JSON.parse(component);
 				json.enabled === true ? json.enabled = false : json.enabled = true;
 				localStorage.setItem(`${name}Component`, JSON.stringify(json));
+				// @ts-ignore
 				this.componentsSet[name] = json;
 			} else {
 				const string = JSON.stringify({"enabled": true});
 				localStorage.setItem(`${name}Component`, string);
+				// @ts-ignore
 				this.componentsSet[name] = {
 					enabled: true
 				};
 			}
-
+			// @ts-ignore
 			this.updateComponent(name, this.componentsSet[name]);
 			this.$emit('reload');
 		},
@@ -109,7 +123,7 @@ export default {
 			'components'
 		])
 	}
-};
+});
 </script>
 
 <style scoped lang="scss">
@@ -163,7 +177,6 @@ export default {
 			font-size: 1rem;
 
 			.check_box {
-				display: inline-block;
 				float: left;
 				margin: 0;
 				padding: 0;

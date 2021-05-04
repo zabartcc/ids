@@ -41,10 +41,17 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 export default {
 	name: 'Spinner',
-	props: ['width']
+	props: {
+		width: {
+			type: Number,
+			default: 200,
+			required: false
+		}
+	}
 };
 </script>
 

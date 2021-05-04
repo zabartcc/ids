@@ -1,7 +1,7 @@
 <template>
 	<div class="wrapper" ref="wrapper">
 		<div class="empty" v-if="wrapperIsEmpty">
-			<img :src="require('@/assets/images/icons/cactus.svg')" height="300" width="300" draggable="false" />
+			<img :src="require('@/assets/images/icons/cactus.svg')" alt="No components added" height="300" width="300" draggable="false" />
 			<h3>It's empty here</h3>
 			<h6 class="dropdown-trigger" data-target="components_selection">Try adding a new component</h6>
 		</div>
@@ -29,15 +29,16 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex';
+import { defineComponent } from 'vue';
+import { mapActions } from 'vuex';
 import interact from 'interactjs';
-import eventBus from '@/assets/js/eventBus.js';
+import eventBus from '@/assets/js/eventBus';
 import Map from '@/components/Map.vue';
 import Atis from '@/components/Atis.vue';
 import Pirep from '@/components/Pirep.vue';
 import Status from '@/components/Status.vue';
 
-export default {
+export default defineComponent({
 	name: 'Home',
 	data() {
 		return {
@@ -214,7 +215,7 @@ export default {
 			}
 		}
 	}
-};
+});
 </script>
 
 <style scoped lang="scss">
@@ -256,8 +257,8 @@ export default {
 	}
 
 	::-webkit-scrollbar-track {
-		margin-top: 20px;
-		margin-bottom: 10px;
+		margin-top: 0;
+		margin-bottom: 0;
 		border-radius: 10px;
 	}
 

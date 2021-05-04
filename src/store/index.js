@@ -1,7 +1,7 @@
 import {createStore} from 'vuex';
-import timer from './timer.js';
-import user from './user.js';
-import components from './components.js';
+import timer from './timer';
+import user from './user';
+import components from './components';
 
 export default createStore({
 	modules: {

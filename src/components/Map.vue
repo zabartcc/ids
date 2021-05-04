@@ -145,8 +145,8 @@
 			<!-- Dynamically draw planes on map here -->
 			<l-marker v-for="(plane, callsign) in aircraft" :lat-lng="[+plane.lat, +plane.lng]" :key="callsign">
 				<l-icon :icon-url="require('@/assets/images/icons/diamond.png')" :icon-size="[12, 12]" :tooltipAnchor="[50,20]" />
-				<l-polyline :lat-lngs="[[plane.lat, plane.lng], newCoord(+plane.lat, +plane.lng, plane.speed, plane.heading)]" color="#C8C806" className="p_track" />
-				<l-tooltip v-if="showDatablock === true" :options="{permanent: true, sticky: true, offset: ([5,30])}">{{plane.callsign}}<br />{{calcAltitude(plane.altitude, plane.cruise)}}<br />412 {{('000' + plane.speed).slice(-3)}}<br /><span class="acft_destination">{{plane.destination}}</span></l-tooltip>
+				<l-polyline :lat-lngs="[[plane.lat, plane.lng], newCoord(+plane.lat, +plane.lng, +plane.speed, +plane.heading)]" color="#C8C806" className="p_track" />
+				<l-tooltip v-if="showDatablock === true" :options="{permanent: true, sticky: true, offset: ([5,30])}">{{plane.callsign}}<br />{{calcAltitude(+plane.altitude, +plane.cruise)}}<br />412 {{('000' + plane.speed).slice(-3)}}<br /><span class="acft_destination">{{plane.destination}}</span></l-tooltip>
 			</l-marker>
 		</l-map>
 		<div class="map_controls">
@@ -169,16 +169,33 @@
 	</div>
 </template>
 
-<script>
-import {LMap, LTileLayer, LPolygon, LWmsTileLayer, LMarker, LIcon, LPolyline, LTooltip} from "@vue-leaflet/vue-leaflet";
+<script lang="ts">
+import { defineComponent } from 'vue';
+// @ts-ignore
+import { LMap, LTileLayer, LPolygon, LWmsTileLayer, LMarker, LIcon, LPolyline, LTooltip } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
-import {mapActions} from 'vuex';
-import {zabApi} from '@/helpers/axios.js';
+import { mapActions } from 'vuex';
+import { zabApi } from '@/helpers/axios';
+// @ts-ignore
 import M from 'materialize-css';
 
-export default {
+interface State {
+	sse: EventSource | null,
+	aircraft: AircraftOnMap[],
+	zoom: number,
+	pt: number,
+	showDatablock: boolean
+};
+
+export default defineComponent({
 	name: 'Map',
-	props: ['editing'],
+	props: {
+		editing: {
+			type: Boolean,
+			required: false,
+			default: false
+		}
+	},
 	components: {
 		LMap,
 		LTileLayer,
@@ -189,10 +206,10 @@ export default {
 		LPolyline,
 		LTooltip
 	},
-	data() {
+	data(): State {
 		return {
 			sse: null,
-			aircraft: {},
+			aircraft: [],
 			zoom: 6,
 			pt: 4,
 			showDatablock: true
@@ -208,17 +225,18 @@ export default {
 		this.sse.onmessage = this.handleAircraftUpdate;
 	},
 	methods: {
-		async initAircraft() {
+		async initAircraft(): Promise<void> {
 			const allAircraft = (await zabApi.get('/ids/aircraft')).data;
 			for(const callsign of allAircraft) {
 				this.getAircraftData(callsign);
 			}
 			this.setTimestamp(Date.now());
 		},
-		async getAircraftData(callsign) {
-			this.aircraft[callsign] = (await zabApi.get(`/ids/aircraft/${callsign}`)).data;
+		async getAircraftData(callsign: string): Promise<void> {
+			const i = this.aircraft.findIndex(a => a.callsign === callsign);
+			this.aircraft[i] = (await zabApi.get(`/ids/aircraft/${callsign}`)).data;
 		},
-		handleAircraftUpdate({data}) {
+		handleAircraftUpdate({data}: any): void {
 			data = JSON.parse(data);
 			if(data.type == "update") {
 				this.aircraft[data.callsign] = data;
@@ -228,7 +246,7 @@ export default {
 			}
 			this.setTimestamp(Date.now());
 		},
-		newCoord(long, lat, speed, heading) {
+		newCoord(long: number, lat: number, speed: number, heading: number): Array<number> {
 			const radian = heading * (Math.PI / 180);
 			const d = ((speed / 60) * this.pt) * 1.15078; // speed to miles (PT length: 4 min by default)
 			const dy = Math.cos(radian) * d;
@@ -237,7 +255,7 @@ export default {
 			const coordX = lat + (dx / 57.27);
 			return [coordY, coordX];
 		},
-		calcAltitude(altitude, cruise = 0) {
+		calcAltitude(altitude: number, cruise: number): string {
 			const cruiseAbbv = Math.round(+cruise/100);
 			const altAbbv = Math.round(+altitude/100);
 			const cruiseString = `000${cruiseAbbv}`.slice(-3);
@@ -245,32 +263,27 @@ export default {
 			if(Math.abs(cruiseAbbv - altAbbv) <= 4) {
 				return `${cruiseString}C`;
 			}
-			if(cruiseAbbv > altAbbv) {
+			else if(cruiseAbbv > altAbbv) {
 				return `${cruiseString}-${altString}`;
 			}
-			if(cruiseAbbv < altAbbv) {
-				return `${cruiseString}+${altString}`;
-			}
+
+			return `${cruiseString}+${altString}`;
 		},
-		decreasePt() {
+		decreasePt(): void {
 			if(this.pt !== 1) {
 				this.pt = (this.pt / 2);
-			} else {
-				return;
 			}
 		},
-		increasePt() {
+		increasePt(): void {
 			if(this.pt !== 8) {
 				this.pt = (this.pt * 2);
-			} else {
-				return;
 			}
 		},
 		...mapActions('timer', [
 			'setTimestamp'
 		]),
 	},
-}
+});
 </script>
 
 <style lang="scss">

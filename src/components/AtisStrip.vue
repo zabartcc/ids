@@ -2,7 +2,7 @@
 	<div id="atis-strip">
 		<div class="row border_bottom">
 			<div class="col s2 title">
-				{{info.airport ?? '????'}}
+				{{info.airport}}
 			</div>
 			<div class="col s9">
 				AREA STATUS INFORMATION
@@ -58,23 +58,31 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+// @ts-ignore
 import parser from 'metar-parser';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
 	name: 'AtisStrip',
-	props: ['info'],
+	props: {
+		info: {
+			type: Object as () => AtisStations,
+			required: true
+		}
+	},
 	methods: {
-		delAtis(station) {
+		delAtis(station: string) {
+			// @ts-ignore
 			this.$parent.removeUserStation(station)
 		}
 	},
 	computed: {
-		parsedMetar() {
+		parsedMetar(): Object {
 			return parser(this.info.metar);
 		}
 	}
-}
+});
 </script>
 
 <style scoped lang="scss">

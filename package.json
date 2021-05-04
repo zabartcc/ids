@@ -1,30 +1,31 @@
 {
   "name": "zab-ids",
-  "description": "Electron app inspired by the FAA's IDS4 for use by ZAB on the VATSIM network",
   "version": "0.0.0",
+  "private": true,
+  "description": "Electron app inspired by the FAA's IDS4 for use by ZAB on the VATSIM network",
   "author": "Albuquerque ARTCC",
   "contributors": [
     "Austin Robison",
     "Daan Janssen"
   ],
   "license": "CC-BY-NC-SA-4.0",
-  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/albuquerque-web-stack/ids"
+  },
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "electron:build": "vue-cli-service electron:build",
     "electron": "vue-cli-service electron:serve",
+    "electron:build": "vue-cli-service electron:build",
+    "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
     "publish": "npm run electron:build -- --win -p always"
   },
   "main": "background.js",
   "dependencies": {
     "@vue-leaflet/vue-leaflet": "^0.6.0",
     "axios": "^0.21.1",
-    "core-js": "^3.11.0",
+    "core-js": "^3.11.2",
     "electron-updater": "^4.3.8",
     "interactjs": "^1.10.11",
     "leaflet": "^1.7.1",
@@ -36,21 +37,27 @@
     "vuex": "^4.0.0"
   },
   "devDependencies": {
+    "@types/eventsource": "^1.1.5",
+    "@typescript-eslint/eslint-plugin": "^4.18.0",
+    "@typescript-eslint/parser": "^4.18.0",
     "@vue/cli-plugin-babel": "^4.5.12",
     "@vue/cli-plugin-eslint": "^4.5.12",
     "@vue/cli-plugin-router": "^4.5.12",
+    "@vue/cli-plugin-typescript": "^4.5.12",
     "@vue/cli-plugin-vuex": "^4.5.12",
     "@vue/cli-service": "^4.5.12",
     "@vue/compiler-sfc": "^3.0.11",
+    "@vue/eslint-config-typescript": "^7.0.0",
     "babel-eslint": "^10.1.0",
-    "electron": "^12.0.5",
+    "electron": "^12.0.6",
+    "electron-builder": "^22.10.5",
     "electron-devtools-installer": "^3.2.0",
     "electron-icon-builder": "^2.0.1",
-    "electron-builder": "^22.10.5",
-    "eslint": "^7.24.0",
+    "eslint": "^7.25.0",
     "eslint-plugin-vue": "^7.9.0",
     "node-sass": "^5.0.0",
     "sass-loader": "^10.1.0",
+    "typescript": "^4.2.4",
     "vue-cli-plugin-electron-builder": "~2.0.0-rc.6"
   }
 }

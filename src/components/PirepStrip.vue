@@ -17,27 +17,39 @@
 	</div>
 </template>
 
-<script>
-import {zabApi} from '@/helpers/axios.js';
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { zabApi } from '@/helpers/axios';
 
-export default {
+interface State {
+	visible: boolean;
+}
+
+export default defineComponent({
 	name: 'PirepStrip',
-	data() {
+	data(): State {
 		return {
 			visible: true
+		};
+	},
+	props: {
+		// @ts-ignore
+		info: {
+			type: {} as Pireps,
+			required: true
 		}
 	},
-	props: ['info'],
 	methods: {
-		async deletePirep(id) {
+		async deletePirep(id: string): Promise<void> {
 			try {
-				await zabApi.delete(`/ids/pireps/${id}`);
+				// @ts-ignore
 				this.visible = false;
+				await zabApi.delete(`/ids/pireps/${id}`);
 			} catch(e) {
 				console.log(e);
 			}
 		},
-		getTime(time) {
+		getTime(time: string): string {
 			if(time) {
 				const d = new Date(time);
 				return `${('00' + d.getUTCHours()).slice(-2)}${('00' + d.getUTCMinutes()).slice(-2)}`;
@@ -45,11 +57,16 @@ export default {
 				return '—';
 			}
 		},
-		observedTime(time) {
+		observedTime(time: string): string {
 			const unixTime = new Date(time).getTime();
 			const now = new Date().getTime();
 			let difference = (unixTime / 1000) - (now / 1000);
-			const tfn = {};
+
+			const tfn = {
+				unitOfTime: '',
+				time: 0
+			};
+
 			difference = Math.abs(difference);
 			if (difference / (60 * 60) > 1) {
 				tfn.unitOfTime = 'h';
@@ -63,12 +80,17 @@ export default {
 			}
 			return `${tfn.time}${tfn.unitOfTime} ago`;
 		},
-		expireTime(time) {
+		expireTime(time: string): string {
 			const currentTime = new Date().getTime();
 			const date = new Date(time);
 			const twoHoursLater = date.setHours(date.getHours() + 2);
 			let difference = (twoHoursLater / 1000) - (currentTime / 1000);
-			const tfn = {};
+
+			const tfn = {
+				unitOfTime: '',
+				time: 0
+			};
+
 			difference = Math.abs(difference);
 			if (difference / (60 * 60) > 1) {
 				tfn.unitOfTime = 'h';
@@ -83,7 +105,7 @@ export default {
 			return `${tfn.time}${tfn.unitOfTime}`;
 		}
 	}
-}
+});
 </script>
 
 <style scoped lang="scss">

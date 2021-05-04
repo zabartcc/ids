@@ -24,17 +24,17 @@
 			</div>
 			<div class="table_body">
 				<div v-if="addNewPirep" class="pirep_strip row">
-					<div class="col s1 center-align"><input type="text" v-model="newPirep.ua" maxlength="3" placeholder="—" /></div>
-					<div class="col s1 center-align"><input type="text" v-model="newPirep.ov" maxlength="5" placeholder="—" /></div>
-					<div class="col s1 center-align"><input type="text" v-model="newPirep.tm" maxlength="4" placeholder="—" /></div>
-					<div class="col s1 center-align"><input type="text" v-model="newPirep.fl" maxlength="3" placeholder="—" /></div>
-					<div class="col s1 center-align"><input type="text" v-model="newPirep.tp" maxlength="6" placeholder="—" /></div>
-					<div class="col s1 center-align"><input type="text" v-model="newPirep.sk" maxlength="10" placeholder="—" /></div>
-					<div class="col s1 center-align"><input type="text" v-model="newPirep.wx" maxlength="10" placeholder="—" /></div>
-					<div class="col s1 center-align"><input type="text" v-model="newPirep.ta" maxlength="4" placeholder="—" /></div>
-					<div class="col s1 center-align"><input type="text" v-model="newPirep.wv" maxlength="10" placeholder="—" /></div>
-					<div class="col s2 center-align"><input type="text" v-model="newPirep.tb" maxlength="10" placeholder="—" /></div>
-					<div class="col s1 center-align"><input type="text" v-model="newPirep.ic" maxlength="16" placeholder="—" /></div>
+					<div class="col s1 center-align"><input type="text" v-model="newPirep.urgent" :maxlength="3" placeholder="—" /></div>
+					<div class="col s1 center-align"><input type="text" v-model="newPirep.location" :maxlength="5" placeholder="—" /></div>
+					<div class="col s1 center-align"><input type="text" v-model="newPirep.reportTime" :maxlength="4" placeholder="—" /></div>
+					<div class="col s1 center-align"><input type="text" v-model="newPirep.flightLevel" :maxlength="3" placeholder="—" /></div>
+					<div class="col s1 center-align"><input type="text" v-model="newPirep.aircraft" :maxlength="6" placeholder="—" /></div>
+					<div class="col s1 center-align"><input type="text" v-model="newPirep.skyCond" :maxlength="10" placeholder="—" /></div>
+					<div class="col s1 center-align"><input type="text" v-model="newPirep.vis" :maxlength="10" placeholder="—" /></div>
+					<div class="col s1 center-align"><input type="text" v-model="newPirep.temp" :maxlength="4" placeholder="—" /></div>
+					<div class="col s1 center-align"><input type="text" v-model="newPirep.wind" :maxlength="10" placeholder="—" /></div>
+					<div class="col s2 center-align"><input type="text" v-model="newPirep.turbulence" :maxlength="10" placeholder="—" /></div>
+					<div class="col s1 center-align"><input type="text" v-model="newPirep.icing" :maxlength="16" placeholder="—" /></div>
 					<div class="info">
 						<span @click="submitNewPirep">Submit</span> | <span @click="deleteNewPirep">Delete</span>
 					</div>
@@ -51,22 +51,30 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import PirepStrip from './PirepStrip.vue';
-import {zabApi} from '@/helpers/axios.js';
+import { zabApi } from '@/helpers/axios';
+import { mapState } from 'vuex';
+// @ts-ignore
 import M from 'materialize-css';
 
-export default {
+interface State {
+	pireps: Pireps[];
+	addNewPirep: boolean;
+	newPirep: Pireps | any;
+}
+
+export default defineComponent({
 	name: 'Pireps',
 	components: {
 		PirepStrip,
 	},
-	data() {
+	data(): State {
 		return {
 			pireps: [],
 			addNewPirep: false,
-			newPirep: {
-			}
+			newPirep: {}
 		}
 	},
 	props: ['editing'],
@@ -79,11 +87,11 @@ export default {
 		setInterval(this.getAllPireps, 120000); // Two minutes
 	},
 	methods: {
-		async getAllPireps() {
+		async getAllPireps(): Promise<void> {
 			const {data} = await zabApi.get('/ids/pireps');
 			this.pireps = data;
 		},
-		async submitNewPirep() {
+		async submitNewPirep(): Promise<void> {
 			try {
 				await zabApi.post('/ids/pireps', this.newPirep);
 				await this.getAllPireps();
@@ -96,18 +104,23 @@ export default {
 			}
 		},
 		addNewPirepButton() {
-			if(this.$store.state.user.user.isLoggedIn === true) {
+			if(this.user.isLoggedIn === true) {
 				this.addNewPirep = true;
 				const d = new Date(Date.now());
-				this.newPirep.tm = `${d.getUTCHours()}${d.getUTCMinutes()}`;
+				this.newPirep.reportTime = `${d.getUTCHours()}${d.getUTCMinutes()}`;
 			}
 		},
 		deleteNewPirep() {
-			this.newPirepContent = {};
+			this.newPirep = {};
 			this.addNewPirep = false;
 		}
+	},
+	computed: {
+		...mapState('user', [
+			'user'
+		])
 	}
-}
+});
 </script>
 
 <style scoped lang="scss">
@@ -115,10 +128,10 @@ export default {
 	height: 100%;
 	width: 100%;
 	background-color: #0F0F0F;
-	overflow: auto;
 	border-radius: 15px;
 	padding: 0;
 	font-family: "Lucida Console", "Lucida Sans Typewriter", monaco;
+	overflow: hidden;
 }
 
 .top_bar {
@@ -133,16 +146,15 @@ export default {
 }
 
 .pirep_table {
-	overflow: auto;
 	min-height: 89%;
 	width: 100%;
+	overflow: auto;
 
 	.table_header {
 		border-top: 1px solid #3C3C3C;
 		border-bottom: 1px solid #3C3C3C;
 		width: 120%;
-		overflow: auto;
-		padding: 0 1em 0 1.5em;
+		padding: 0 1em 0 1em;
 
 		div {
 			font-size: .85rem;
@@ -163,7 +175,8 @@ export default {
 	}
 
 	.table_body {
-		padding: 0 .5em 0 1.5em;
+		padding: 0 .5em 0 1em;
+		overflow: scroll!important;
 	}
 }
 

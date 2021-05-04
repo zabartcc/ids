@@ -49,15 +49,22 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+// @ts-ignore
 import M from 'materialize-css';
 import Spinner from '@/components/Spinner.vue';
-import {zabApi} from '@/helpers/axios.js';
-import {mapActions} from 'vuex';
+import { defineComponent } from 'vue';
+import { zabApi } from '@/helpers/axios';
+import { mapActions } from 'vuex';
 
-export default {
+interface State {
+	token: string;
+	loading: boolean;
+}
+
+export default defineComponent({
 	name: 'Home',
-	data() {
+	data(): State {
 		return {
 			token: '',
 			loading: true
@@ -76,7 +83,7 @@ export default {
 		...mapActions('user', [
 			'setData'
 		]),
-		async verifySession() {
+		async verifySession(): Promise<void> {
 			this.loading = true;
 
 			if(localStorage.getItem('ids_token') !== null) {
@@ -87,7 +94,7 @@ export default {
 				this.loading = false;
 			}
 		},
-		async checkToken() {
+		async checkToken(): Promise<void> {
 			try {
 				const {data} = await zabApi.post('/ids/checktoken', {
 					token: localStorage.getItem('ids_token')
@@ -107,16 +114,16 @@ export default {
 				console.log(e);
 			}
 		},
-		async processLogin() {
+		async processLogin(): Promise<void> {
 			localStorage.setItem('ids_token', this.token);
 			await this.checkToken();
 		},
-		continueAsGuest() {
+		continueAsGuest(): void {
 			localStorage.setItem('guest', 'true');
 			this.$router.push('/home');
 		}
 	}
-}
+});
 </script>
 
 <style scoped lang="scss">

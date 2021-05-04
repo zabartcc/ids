@@ -20,11 +20,18 @@
 	</div>
 </template>
 
-<script>
-import {zabApi} from '@/helpers/axios.js';
-import { mapActions } from 'vuex'
-export default {
-	data() {
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { zabApi } from '@/helpers/axios';
+import { mapActions } from 'vuex';
+
+interface State {
+	neighbors: Array<string>;
+	neighborMap: Object
+};
+
+export default defineComponent({
+	data(): State {
 		return {
 			neighbors: [],
 			neighborMap: {
@@ -38,16 +45,23 @@ export default {
 			}
 		}
 	},
-	props: ['editing'],
+	props: {
+		editing: {
+			type: Boolean,
+			required: false,
+			default: false
+		}
+	},
 	async mounted() {
 		await this.getNeighbors();
 		setInterval(this.getNeighbors, 60000);
 	},
 	methods: {
-		async getNeighbors() {
+		async getNeighbors(): Promise<void> {
 			this.neighbors = (await zabApi.get('/ids/neighbors')).data;
 			if(this.neighbors.length) {
 				document.querySelectorAll('.artcc_grid div[artcc]').forEach(artcc => artcc.removeAttribute('online'));
+				// @ts-ignore
 				this.neighbors.forEach(neighbor => this.$refs[this.neighborMap[neighbor.toLowerCase()]].setAttribute('online', true));
 			}
 			this.setTimestamp(Date.now())
@@ -56,7 +70,7 @@ export default {
 			'setTimestamp'
 		]),
 	}
-}
+});
 </script>
 
 <style scoped lang="scss">

@@ -1,5 +1,5 @@
-import {zabApi} from '@/helpers/axios.js';
-import router from '../router/index.js';
+import {zabApi} from '@/helpers/axios';
+import router from '../router/index';
 
 export default {
 	namespaced: true,

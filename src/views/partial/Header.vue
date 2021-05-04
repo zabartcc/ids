@@ -45,33 +45,42 @@
 	</div>
 </template>
 
-<script>
-import {mapState} from 'vuex';
-import {zabApi} from '@/helpers/axios.js';
-export default {
-	data() {
+<script lang="ts">
+import { mapState } from 'vuex';
+import { zabApi } from '@/helpers/axios';
+import { defineComponent } from 'vue';
+
+interface State {
+	online: AtcOnline | null;
+	now: number;
+};
+
+export default defineComponent({
+	data(): State {
 		return {
 			online: null,
-			now: new Date(Date.now())
+			now: +new Date(Date.now())
 		};
 	},
 	async mounted() {
 		await this.getControllersOnline();
 		setInterval(() => {
+			// @ts-ignore
 			document.getElementById('zulu_time').innerHTML = new Date().toLocaleString('en-US', {timeZone: 'UTC', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'});
+			// @ts-ignore
 			document.getElementById('local_time').innerHTML = new Date().toLocaleString('en-US', {timeZone: 'America/Phoenix', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'});
-			this.now = new Date(Date.now());
+			this.now = +new Date(Date.now());
 		}, 1000);
 		setInterval(this.getControllersOnline, 120000);
 	},
 	methods: {
-		async getControllersOnline() {
+		async getControllersOnline(): Promise<void> {
 			try {
 				this.online = null;
 
 				if(localStorage.getItem('guest') !== "true") {
 					const {data} = await zabApi.get('/online');
-					data.data.atc.forEach((atc) => {
+					data.data.atc.forEach((atc: AtcOnline) => {
 						if(atc.cid === this.user.data.cid) {
 							this.online = atc;
 						}
@@ -86,12 +95,12 @@ export default {
 		...mapState('user', [
 			'user'
 		]),
-		controllerName() {
+		controllerName(): string {
 			return `${this.user.isLoggedIn ? this.user.data.fname + ' ' + this.user.data.lname : '—'}`;
 		},
-		uptime() {
+		uptime(): string {
 			if(this.online) {
-				const d = new Date(this.online.timeStart);
+				const d = +new Date(this.online.timeStart);
 				const delta = Math.abs(this.now - d) / 1000;
 				
 				const hours = ('00' + Math.floor(delta / 3600) % 24).slice(-2);
@@ -104,7 +113,7 @@ export default {
 			}
 		}
 	},
-};
+});
 </script>
 
 <style scoped lang="scss">

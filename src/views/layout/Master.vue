@@ -5,7 +5,7 @@
 		</header>
 		<main>
 			<div class="row main_content">
-				<router-view :key="reloadKey"></router-view>
+				<router-view :key="reloadKey" />
 			</div>
 		</main>
 		<footer>
@@ -14,13 +14,18 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import {defineComponent} from 'vue';
 import Header from '@/views/partial/Header.vue';
 import Footer from '@/views/partial/Footer.vue';
 import {mapActions} from 'vuex';
 
-export default {
-	data() {
+interface State {
+	reloadKey: number;
+};
+
+export default defineComponent({
+	data(): State {
 		return {
 			reloadKey: 0
 		}
@@ -33,14 +38,14 @@ export default {
 		await this.getData(localStorage.getItem('ids_token'));
 	},
 	methods: {
-		reloadView() {
+		reloadView(): void {
 			this.reloadKey++;
 		},
 		...mapActions('user', [
 			'getData'
 		]),
 	}
-};
+});
 </script>
 
 <style scoped lang="scss">

@@ -9,12 +9,12 @@
 			</div>
 			<div class="add_atis" v-show="newAtis">
 				<form class="add_input" @submit.prevent=addStation>
-					<input type="text" ref="new_atis_input" class="browser-default add_input" minlength="4" maxlength="4" v-model="atisInput" />
+					<input type="text" ref="new_atis_input" class="browser-default add_input" :minlength="4" :maxlength="4" v-model="atisInput" />
 				</form>
 			</div>
 		</div>
 		<div class="atis_wrapper">
-			<AtisStrip v-for="station in userStations" :key=station.airport :info="station" />
+			<AtisStrip v-for="station in userStations" :key="station.airport" :info="station" />
 		</div>
 		<div class="edit_overlay" v-if="editing">
 			<h2 class="component_name">ATIS</h2>
@@ -22,20 +22,35 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { zabApi } from '@/helpers/axios';
 import AtisStrip from './AtisStrip.vue';
-import {zabApi} from '@/helpers/axios.js';
 
-export default {
+interface State {
+	enabledStations: Array<string>;
+	allStations: AtisStations[];
+	newAtis: boolean;
+	atisInput: string;
+	sse: EventSource | null;
+}
+
+export default defineComponent({
 	name: 'Atis',
-	props: ['editing'],
+	props: {
+		editing: {
+			type: Boolean,
+			required: false,
+			default: false
+		}
+	},
 	components: {
 		AtisStrip
 	},
-	data() {
+	data(): State {
 		return {
-			userStations: {},
-			allStations: {},
+			enabledStations: [],
+			allStations: [],
 			newAtis: false,
 			atisInput: '',
 			sse: null
@@ -43,109 +58,96 @@ export default {
 	},
 	async mounted() {
 		await this.getAllStations();
-		this.getUserStations();
-		this.sse = new EventSource(`${process.env.VUE_APP_API_URL}/ids/atis`)
+		this.enabledStations = JSON.parse(localStorage.getItem('atis_stations') || '') || [];
+		this.sse = new EventSource(`${process.env.VUE_APP_API_URL}/ids/atis`);
 		this.sse.onmessage = this.handleAtisUpdate;
 	},
 	methods: {
-		getUserStations() {
-			const userStations = JSON.parse(localStorage.getItem('atis_stations')) || [];
-			userStations.forEach(station => {
-				if(Object.keys(this.allStations).includes(station)) {
-					this.userStations[station] = this.allStations[station];
-				}
-			})
-		},
-		async getAllStations() {
+		async getAllStations(): Promise<void> {
 			const { data } = await zabApi.get('/ids/stations');
 			for await(const apt of data) {
 				this.allStations[apt] = {
-					airport: apt,
-					letter: null,
-					metar: null,
-					dep: null,
-					arr: null,
+					airport: apt
 				}
 				await this.getStationData(apt);
 			}
 		},
-		async getStationData(station) {
-			const {data} = (await zabApi.get(`/ids/stations/${station}`));
-			const theStation = this.allStations[station];
-			this.allStations[station] = {...theStation, ...data}
+		async getStationData(airport: string): Promise<void> {
+			const {data} = await zabApi.get(`/ids/stations/${airport}`);
+			const i = this.allStations.findIndex(station => station.airport === airport);
+			const theStation = this.allStations[i];
+			this.allStations[i] = { ...theStation, ... data};
 		},
-		handleAtisUpdate({data}) {
+		handleAtisUpdate({data}: any): void {
 			data = JSON.parse(data);
-			const theStation = this.allStations[data.station];
-			console.log({data, theStation})
+			const i = this.allStations.findIndex((s) => s.airport === data.station);
+			const theStation = this.allStations[i];
 			if(data.type == 'update') {
-				this.allStations[data.station] = {...theStation, ...data}
+				this.allStations[i] = {...theStation, ...data}
 			}
 			if(data.type == 'delete') {
-				this.allStations[data.station] = {
-					...theStation,
-					letter: null,
-					dep: null,
-					arr: null,
+				this.allStations[i] = {
+					...theStation
 				} 
 			}
-			if(Object.keys(this.userStations).includes(data.station)) {
-				this.userStations[data.station] = this.allStations[data.station];
-			}
 		},
-		removeUserStation(station) {
-			delete this.userStations[station];
-			localStorage.setItem('atis_stations', JSON.stringify(Object.keys(this.userStations)));
+		removeUserStation(airport: string): void {
+			const i = this.enabledStations.findIndex(station => station === airport);
+			delete this.enabledStations[i];
+			localStorage.setItem('atis_stations', JSON.stringify(this.enabledStations));
 		},
-		addStation() {
+		addStation(): void {
 			const station = this.atisInput.toUpperCase();
-			if(Object.keys(this.allStations).includes(station)) {
-				this.userStations[station] = this.allStations[station];
+			if(!this.enabledStations.includes(station)) {
+				this.enabledStations.push(station);
 			}
-			localStorage.setItem('atis_stations', JSON.stringify(Object.keys(this.userStations)));
+			localStorage.setItem('atis_stations', JSON.stringify(this.enabledStations));
 			this.newAtis = !this.newAtis;
 			this.atisInput = '';
 		},
-		// async addStation() {
-		// 	if(this.addedStations.indexOf(this.atisInput.toUpperCase()) === -1) {
-		// 		this.addedStations.push(this.atisInput.toUpperCase());
-		// 		localStorage.removeItem('atis_stations');
-		// 		localStorage.setItem('atis_stations', JSON.stringify(this.addedStations));
-		// 		this.atisInput = '';
-		// 		await this.getAllStations();
-
-		// 	} else {
-		// 		return this.atisInput = '';
-		// 	}
-		// 	await this.openAtis();
-		// },
-		openAtis() {
+		openAtis(): void {
 			this.newAtis = !this.newAtis;
 			if(this.newAtis) {
-				this.$nextTick(() => this.$refs.new_atis_input.focus())
+				this.$nextTick(() => (this.$refs.new_atis_input as any).focus())
 			}
 		}
+	},
+	computed: {
+		userStations(): Array<AtisStations> {
+			let stationsToReturn = [];
+
+			for(const enabledStation of this.enabledStations) {
+				for(const station of this.allStations) {
+					if(enabledStation === station.airport) {
+						stationsToReturn.push(station);
+					}
+				}
+			}
+
+			return stationsToReturn;
+		}
 	}
-}
+});
 </script>
 
 <style scoped lang="scss">
 #atis {
 	height: 100%;
 	width: 100%;
-	overflow: auto;
 	background-color: #0F0F0F;
 	border-radius: 15px;
-	padding: 0;
+	padding: 0 1em 1em 1em;
 	font-family: "Lucida Console", "Lucida Sans Typewriter", monaco;
+	overflow: hidden;
 }
 
 .atis_wrapper {
-	padding: 0 1em .5em 1em;
+	overflow: auto;
+	height: calc(100% - 2em);
 }
 .top_bar {
 	width: 100%;
-	padding: .5em 1em .33em 1em;
+	padding: .5em 0 .33em 0;
 	margin-bottom: 5px;
 	.add {
 		float: right;
