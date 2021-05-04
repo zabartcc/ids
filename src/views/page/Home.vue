@@ -205,8 +205,7 @@ export default {
 		}
 	},
 	watch: {
-		editing: async function(value) { // get new data if route remains the same but parameter changes
-			console.log('watcher worked');
+		editing: async function(value) {
 			if(value === true) {
 				await this.initAllComponents();
 			} else {
