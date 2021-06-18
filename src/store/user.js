@@ -1,3 +1,4 @@
+import M from 'materialize-css';
 import {zabApi} from '@/helpers/axios';
 import router from '../router/index';
 
@@ -19,17 +20,25 @@ export default {
 		},
 		getData: async({commit}, token) => {
 			try {
-				if(localStorage.getItem('guest') !== 'true' && (localStorage.getItem('ids_token') !== '' || localStorage.getItem('ids_token') !== undefined)) {
+				if((localStorage.getItem('guest') === 'true' && localStorage.getItem('ids_token') !== '') || (localStorage.getItem('guest') !== 'true' && localStorage.getItem('ids_token') !== undefined)) {
 					const {data} = await zabApi.post('/ids/checktoken', {
 						token: token
 					});
 					if(data.ret_det.code === 200) {
+						console.log(200);
 						commit('setUser', data.data);
 						commit('setLoggedIn', true);
+						localStorage.setItem('guest', 'false')
+						router.push('/home');
 						return;
 					} else {
 						commit('setUser', null);
 						commit('setLoggedIn', false);
+						M.toast({
+							html: `<i class="material-icons left">error_outline</i> ${data.ret_det.message} <div class="border"></div>`,
+							displayLength: 5000,
+							classes: 'toast toast_error'
+						});
 						router.push('/');
 					}
 				} else {

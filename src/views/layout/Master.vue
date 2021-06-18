@@ -12,21 +12,38 @@
 			<Footer @reload="reloadView" />
 		</footer>
 	</div>
+	<div ref="settings_wrap" class="settings_wrap" v-if="showSettings">
+		<h6>Settings</h6>
+		<div class="input-field">
+			<div class="label">IDS Token</div>
+			<input id="token" type="text" v-model="settings.token">
+		</div>
+		<button class="btn waves-effect right" @click="updateSettings">Update</button>
+		<button class="btn-flat waves-effect right" @click.prevent="userLogout">Logout</button>
+	</div>
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import { defineComponent } from 'vue';
 import Header from '@/views/partial/Header.vue';
 import Footer from '@/views/partial/Footer.vue';
-import {mapActions} from 'vuex';
+import { mapActions } from 'vuex';
 
 interface State {
+	showSettings: boolean;
+	settings: {
+		token: string | null;
+	};
 	reloadKey: number;
 }
 
 export default defineComponent({
 	data(): State {
 		return {
+			showSettings: false,
+			settings: {
+				token: null
+			},
 			reloadKey: 0
 		}
 	},
@@ -36,8 +53,34 @@ export default defineComponent({
 	},
 	async mounted() {
 		await this.getData(localStorage.getItem('ids_token') || '');
+
+		this.settings.token = localStorage.getItem('ids_token');
+
+		window.addEventListener('keydown', e => {
+			if(e.ctrlKey && e.key === 's') {
+				this.showSettings = true;
+				e.preventDefault();
+				e.stopImmediatePropagation();
+			}
+
+			if(e.key === "Escape") {
+				this.showSettings = false;
+				e.preventDefault();
+				e.stopImmediatePropagation();
+			}
+		});
 	},
 	methods: {
+		async updateSettings(): Promise<void> {
+			localStorage.setItem('ids_token', (this.settings.token || ''));
+			await this.getData(localStorage.getItem('ids_token') || '');
+			this.$router.go(0);
+		},
+		userLogout(): void {
+			localStorage.setItem('ids_token', '');
+			localStorage.setItem('guest', '');
+			this.$router.push('/');
+		},
 		reloadView(): void {
 			this.reloadKey++;
 		},
@@ -87,21 +130,46 @@ export default defineComponent({
 	}
 
 	.btn {
-		margin-top: 2em;
+		margin-top: 1em;
+		margin-bottom: .5em;
+		background-color: #D64437;
 	}
 
-	// input {
-	// 	background: #333;
-	// 	border: 5px solid #222;
-	// 	padding: 1em;
-	// 	font-size: 20px;
-	// 	color: #fff;
-	// 	box-shadow: 0px 5px 25px 6px #000;
-	// 	width: 100%;
-	// 	line-height: 1.5;
-	// 	max-width: 650px;
-	// 	box-sizing: border-box;
-	// }
+	.btn-flat {
+		margin-top: 1em;
+		margin-bottom: .5em;
+		color: #fff;
+		margin-right: .5em;
+	}
+
+	input {
+		border: none;
+		background: #121212;
+		border-radius: 5px;
+		color: #fff;
+		font-family: inherit;
+		padding: 0 .5em;
+		width: calc(100% - 1em);
+
+		&::placeholder {
+			color: #6C6C6C;
+			text-align: center;
+		}
+		
+	}
+
+	input[type=text]:focus {
+		border-bottom: none;
+		box-shadow: none;
+	}
+
+	.label {
+		font-size: .85rem;
+		position: absolute;
+		top: -22px;
+		left: .25em;
+		color: #6C6C6C;
+	}
 }
 
 footer {

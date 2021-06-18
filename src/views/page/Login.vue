@@ -7,13 +7,13 @@
 					<p class="title">Albuquerque ARTCC — Information Display System</p>
 					<p class="description">
 						Welcome to the ZAB Information Display System (IDS). <br /><br />
-						The IDS provides you with a platform that shows information useful when controlling, and eases communications and coordination with fellow controllers. <br /><br />
+						The IDS provides you with information useful when controlling and helps ease communication and coordination with fellow controllers. <br /><br />
 						<span class="no_justify">Please enter your IDS token to continue as a member. Alternatively, you may continue as a guest with limited functionality.</span><br />
 					</p>
 				</div>
 				<div class="row">
 					<div class="col s12 m10">
-						<input type="text" class="ids_token" v-model="token" placeholder="Enter a token" />
+						<input type="text" class="ids_token" v-model="token" placeholder="Enter your token" :maxlength="36" />
 						<div class="help_text modal-trigger" data-target="modal_help">Where do I find my IDS token?</div>
 					</div>
 					<div class="col s12 m2">
@@ -39,7 +39,7 @@
 			<div class="modal-content">
 				<h4>Where do I find my IDS token?</h4>
 				<p>
-					If you are a member of ZAB, you can generate an IDS token from the 'Controller Dashboard' on the Albuquerque ARTCC website.  If your token gets comprised, you can generate a new one.  Please note that your old token will no longer work once you've generated a new one. <br /><br />If you are not a member of ZAB, you can 'Continue as Guest' in order to access the IDS with limited functionality.
+					If you are a member of ZAB, you can generate an IDS token from the 'Controller Dashboard' on the ZAB website. <br /><br />If you are not a member of ZAB, you can 'Continue as Guest' in order to access the IDS with limited functionality.
 				</p>
 			</div>
 			<div class="modal-footer">
@@ -54,7 +54,6 @@
 import M from 'materialize-css';
 import Spinner from '@/components/Spinner.vue';
 import { defineComponent } from 'vue';
-import { zabApi } from '@/helpers/axios';
 import { mapActions } from 'vuex';
 
 interface State {
@@ -81,42 +80,24 @@ export default defineComponent({
 	},
 	methods: {
 		...mapActions('user', [
-			'setData'
+			'setData',
+			'getData'
 		]),
 		async verifySession(): Promise<void> {
 			this.loading = true;
 
 			if(localStorage.getItem('ids_token') !== null) {
-				await this.checkToken();
+				await this.getData(localStorage.getItem('ids_token'));
+				this.loading = false;
 			} else if(localStorage.getItem('guest') === 'true') {
 				this.$router.push('/home');
 			} else {
 				this.loading = false;
 			}
 		},
-		async checkToken(): Promise<void> {
-			try {
-				const {data} = await zabApi.post('/ids/checktoken', {
-					token: localStorage.getItem('ids_token')
-				});
-				if(data.ret_det.code === 200) {
-					await this.setData(data.data);
-					this.$router.push('/home');
-				} else {
-					M.toast({
-						html: `<i class="material-icons left">error_outline</i> ${data.ret_det.message} <div class="border"></div>`,
-						displayLength: 5000,
-						classes: 'toast toast_error'
-					});
-					this.loading = false;
-				}
-			} catch(e) {
-				console.log(e);
-			}
-		},
 		async processLogin(): Promise<void> {
 			localStorage.setItem('ids_token', this.token);
-			await this.checkToken();
+			await this.getData(localStorage.getItem('ids_token'));
 		},
 		continueAsGuest(): void {
 			localStorage.setItem('guest', 'true');
