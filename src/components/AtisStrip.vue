@@ -78,7 +78,7 @@ export default defineComponent({
 		}
 	},
 	computed: {
-		parsedMetar(): Object {
+		parsedMetar(): ParsedMetar {
 			return parser(this.info.metar);
 		}
 	}

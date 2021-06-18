@@ -43,7 +43,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-export default {
+
+export default defineComponent({
 	name: 'Spinner',
 	props: {
 		width: {
@@ -52,7 +53,7 @@ export default {
 			required: false
 		}
 	}
-};
+});
 </script>
 
 <style scoped lang="scss">

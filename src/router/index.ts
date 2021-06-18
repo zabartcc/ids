@@ -1,5 +1,4 @@
 import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router';
-//import Master from '../views/layout/Master.vue';
 
 interface RoutesType {
 	path: string;

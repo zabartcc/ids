@@ -58,7 +58,7 @@ export default defineComponent({
 	},
 	async mounted() {
 		await this.getAllStations();
-		this.enabledStations = JSON.parse(localStorage.getItem('atis_stations') || '') || [];
+		this.enabledStations = JSON.parse(localStorage.getItem('atis_stations') || "[]");
 		this.sse = new EventSource(`${process.env.VUE_APP_API_URL}/ids/atis`);
 		this.sse.onmessage = this.handleAtisUpdate;
 	},

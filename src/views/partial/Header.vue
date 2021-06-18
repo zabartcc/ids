@@ -53,7 +53,7 @@ import { defineComponent } from 'vue';
 interface State {
 	online: AtcOnline | null;
 	now: number;
-};
+}
 
 export default defineComponent({
 	data(): State {

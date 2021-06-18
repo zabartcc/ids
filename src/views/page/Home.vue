@@ -28,7 +28,7 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue';
 import { mapActions, mapState } from 'vuex';
 import interact from 'interactjs';
@@ -38,9 +38,17 @@ import Atis from '@/components/Atis.vue';
 import Pirep from '@/components/Pirep.vue';
 import Status from '@/components/Status.vue';
 
+interface State {
+	windowSize: {
+		x: number;
+		y: number;
+	};
+	editing: boolean;
+}
+
 export default defineComponent({
 	name: 'Home',
-	data() {
+	data(): State {
 		return {
 			windowSize: {
 				x: document.body.clientWidth,
@@ -56,21 +64,21 @@ export default defineComponent({
 		Status
 	},
 	async mounted() {
-		await this.setComponents();
-		await this.initAllComponents();
+		this.setComponents();
+		this.initAllComponents();
 
 		window.addEventListener('resize', this.windowResize);
 
-		eventBus.$on('editToggle', (status) => {
+		eventBus.$on('editToggle', (status: boolean) => {
 			this.editing = status;
 		});
 	},
 	methods: {
-		windowResize() {
+		windowResize(): void {
 			this.windowSize.x = document.body.clientWidth;
 			if(this.editing) this.initAllComponents();
 		},
-		initAllComponents() {
+		initAllComponents(): void {
 			if(this.components['atis'] && this.components['atis'].enabled === true) {
 				this.setSize('atis');
 				if(this.editing) this.initComponent('atis');
@@ -88,21 +96,24 @@ export default defineComponent({
 				if(this.editing) this.initComponent('pirep');
 			}
 		},
-		stopAllEditing() {
+		stopAllEditing(): void {
 			this.stopEditing('atis');
 			this.stopEditing('map');
 			this.stopEditing('status');
 			this.stopEditing('pirep');
 		},
-		setSize(compName) {
+		setSize(compName: string): void {
 			// Set intial position
-			document.getElementById(compName).style.transform = `translate(${this.components[compName].pos_x || 0}px, ${this.components[compName].pos_y || 0}px)`
+			const comp = document.getElementById(compName);
+			if(comp) {
+				comp.style.transform = `translate(${this.components[compName].pos_x || 0}px, ${this.components[compName].pos_y || 0}px)`
 
-			// Set initial height & width
-			document.getElementById(compName).style.width = `${this.components[compName].size_x || 600}px`;
-			document.getElementById(compName).style.height = `${this.components[compName].size_y || 300}px`;
+				// Set initial height & width
+				comp.style.width = `${this.components[compName].size_x || 600}px`;
+				comp.style.height = `${this.components[compName].size_y || 300}px`;
+			}
 		},
-		initComponent(compName) {
+		initComponent(compName: string): void {
 			const el = interact(`.${compName}`);
 			const position = {x: this.components[compName].pos_x || 0, y: this.components[compName].pos_y || 0};
 
@@ -187,7 +198,7 @@ export default defineComponent({
 				});
 			});
 		},
-		stopEditing(compName) {
+		stopEditing(compName: string): void {
 			if(this.components[compName] && this.components[compName].enabled === true) {
 				interact(`.${compName}`).unset();
 			}
@@ -198,7 +209,7 @@ export default defineComponent({
 		])
 	},
 	computed: {
-		wrapperIsEmpty() {
+		wrapperIsEmpty(): boolean {
 			if((this.components['atis'] === null || this.components['atis'].enabled === false) && (this.components['map'] === null || this.components['map'].enabled === false) && (this.components['pirep'] === null || this.components['pirep'].enabled === false) && (this.components['status'] === null || this.components['status'].enabled === false)) return true;
 			else return false;
 		},
@@ -207,7 +218,7 @@ export default defineComponent({
 		])
 	},
 	watch: {
-		editing: async function(value) {
+		editing: async function(value: boolean): Promise<void> {
 			if(value === true) {
 				this.initAllComponents();
 			} else {

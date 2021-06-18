@@ -33,9 +33,8 @@ export default defineComponent({
 		};
 	},
 	props: {
-		// @ts-ignore
 		info: {
-			type: {} as Pireps,
+			type: Object as () => Pireps,
 			required: true
 		}
 	},

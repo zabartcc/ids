@@ -4,7 +4,7 @@
 			<div class="title">
 				PIREPS
 			</div>
-			<div :class="`add tooltipped ${$store.state.user.user.isLoggedIn ? '' : 'guest'}`" :data-tooltip="$store.state.user.user.isLoggedIn ? 'Add PIREP' : 'Log in to add PIREPs'">
+			<div :class="`add tooltipped ${user.isLoggedIn ? '' : 'guest'}`" :data-tooltip="user.isLoggedIn ? 'Add PIREP' : 'Log in to add PIREPs'">
 				<i class="material-icons" @click="addNewPirepButton">add_box</i>
 			</div>
 		</div>
@@ -77,7 +77,13 @@ export default defineComponent({
 			newPirep: {}
 		}
 	},
-	props: ['editing'],
+	props: {
+		editing: {
+			type: Boolean,
+			required: false,
+			default: false
+		}
+	},
 	async mounted() {
 		await this.getAllPireps();
 		M.Tooltip.init(document.querySelectorAll('.tooltipped'), {

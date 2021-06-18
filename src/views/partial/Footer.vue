@@ -1,7 +1,7 @@
 <template>
 	<div class="footer" v-if="components">
 		<div class="info">
-			Version {{version || 'dev'}} | Last updated <span id="show_time">...</span>s ago
+			Version {{version}} | Last updated <span id="show_time">...</span>s ago
 		</div>
 		<div class="settings">
 			<i class="material-icons dropdown-trigger tooltipped" data-target="components_selection" data-tooltip="Toggle Components" data-position="left">add_box</i>
@@ -46,14 +46,12 @@ import { defineComponent } from 'vue';
 import { mapState, mapActions } from 'vuex';
 // @ts-ignore
 import M from 'materialize-css';
-// @ts-ignore
-import eventBus from '@/assets/js/eventBus.js';
+import eventBus from '@/assets/js/eventBus';
 
 interface State {
 	version: string | undefined;
-	componentsSet: Array<Object>;
 	editing: boolean;
-};
+}
 
 export default defineComponent({
 	name: 'Footer',

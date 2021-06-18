@@ -22,7 +22,7 @@ import {mapActions} from 'vuex';
 
 interface State {
 	reloadKey: number;
-};
+}
 
 export default defineComponent({
 	data(): State {

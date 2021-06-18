@@ -176,7 +176,7 @@ import { LMap, LTileLayer, LPolygon, LWmsTileLayer, LMarker, LIcon, LPolyline, L
 import "leaflet/dist/leaflet.css";
 import { mapActions } from 'vuex';
 import { zabApi } from '@/helpers/axios';
-import eventBus from '@/assets/js/eventBus.js';
+import eventBus from '@/assets/js/eventBus';
 // @ts-ignore
 import M from 'materialize-css';
 
@@ -186,7 +186,7 @@ interface State {
 	zoom: number,
 	pt: number,
 	showDatablock: boolean
-};
+}
 
 export default defineComponent({
 	name: 'Map',
@@ -285,7 +285,7 @@ export default defineComponent({
 			}
 		},
 		resizeMapLayer() {
-			this.$refs.map.leafletObject.invalidateSize();
+			(this.$refs.map as any).leafletObject.invalidateSize(); // use 'any' workaround because vue-leaflet has no type definitions
 		},
 		...mapActions('timer', [
 			'setTimestamp'
