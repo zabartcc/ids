@@ -183,7 +183,6 @@ export default defineComponent({
 
 	.table_body {
 		padding: 0 .5em 0 1em;
-		overflow: scroll!important;
 	}
 }
 
