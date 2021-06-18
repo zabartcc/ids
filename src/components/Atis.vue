@@ -8,7 +8,7 @@
 				<i class="material-icons" @click="openAtis">add_box</i>
 			</div>
 			<div class="add_atis" v-show="newAtis">
-				<form class="add_input" @submit.prevent=addStation>
+				<form class="add_input" @submit.prevent="addStation">
 					<input type="text" ref="new_atis_input" class="browser-default add_input" :minlength="4" :maxlength="4" v-model="atisInput" />
 				</form>
 			</div>
@@ -142,8 +142,10 @@ export default defineComponent({
 }
 
 .atis_wrapper {
+	box-sizing: border-box;
+	padding: 0 1em .5em 1em;
 	overflow: auto;
-	height: calc(100% - 2em);
+	height: calc(100% - 40px);
 }
 .top_bar {
 	width: 100%;

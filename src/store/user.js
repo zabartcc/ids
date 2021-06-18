@@ -19,17 +19,21 @@ export default {
 		},
 		getData: async({commit}, token) => {
 			try {
-				const {data} = await zabApi.post('/ids/checktoken', {
-					token: token
-				});
-				if(data.ret_det.code === 200) {
-					commit('setUser', data.data);
-					commit('setLoggedIn', true);
-					return;
+				if(localStorage.getItem('guest') !== 'true' && (localStorage.getItem('ids_token') !== '' || localStorage.getItem('ids_token') !== undefined)) {
+					const {data} = await zabApi.post('/ids/checktoken', {
+						token: token
+					});
+					if(data.ret_det.code === 200) {
+						commit('setUser', data.data);
+						commit('setLoggedIn', true);
+						return;
+					} else {
+						commit('setUser', null);
+						commit('setLoggedIn', false);
+						router.push('/');
+					}
 				} else {
-					commit('setUser', null);
-					commit('setLoggedIn', false);
-					router.push('/');
+					return;
 				}
 			} catch(e) {
 				console.log(e);

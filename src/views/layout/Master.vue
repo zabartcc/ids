@@ -34,8 +34,8 @@ export default defineComponent({
 		Header,
 		Footer
 	},
-	async created() {
-		await this.getData(localStorage.getItem('ids_token'));
+	async mounted() {
+		await this.getData(localStorage.getItem('ids_token') || '');
 	},
 	methods: {
 		reloadView(): void {

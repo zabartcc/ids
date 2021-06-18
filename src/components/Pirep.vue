@@ -146,7 +146,8 @@ export default defineComponent({
 }
 
 .pirep_table {
-	min-height: 89%;
+	overflow: auto;
+	height: calc(100% - 37px);
 	width: 100%;
 	overflow: auto;
 

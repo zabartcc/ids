@@ -1,5 +1,5 @@
 <template>
-	<div class="footer" v-if="componentsSet">
+	<div class="footer" v-if="components">
 		<div class="info">
 			Version {{version || 'dev'}} | Last updated <span id="show_time">...</span>s ago
 		</div>
@@ -11,28 +11,28 @@
 		<ul id="components_selection" class="dropdown-content">
 			<li @click="toggleComponent('map')">
 				<span class="check_box">
-					<i class="material-icons" v-if="componentsSet.map && componentsSet.map.enabled">check</i>
+					<i class="material-icons" v-if="components.map && components.map.enabled">check</i>
 				</span>
 
 				MAP
 			</li>
 			<li @click="toggleComponent('status')">
 				<span class="check_box">
-					<i class="material-icons" v-if="componentsSet.status && componentsSet.status.enabled">check</i>
+					<i class="material-icons" v-if="components.status && components.status.enabled">check</i>
 				</span>
 
 				NEIGHBORS STATUS
 			</li>
 			<li @click="toggleComponent('atis')">
 				<span class="check_box">
-					<i class="material-icons" v-if="componentsSet.atis && componentsSet.atis.enabled">check</i>
+					<i class="material-icons" v-if="components.atis && components.atis.enabled">check</i>
 				</span>
 
 				ATIS
 			</li>
 			<li @click="toggleComponent('pirep')">
 				<span class="check_box">
-					<i class="material-icons" v-if="componentsSet.pirep && componentsSet.pirep.enabled">check</i>
+					<i class="material-icons" v-if="components.pirep && components.pirep.enabled">check</i>
 				</span>
 
 				PIREP
@@ -60,7 +60,6 @@ export default defineComponent({
 	data(): State {
 		return {
 			version: process.env.VUE_APP_VERSION_ID,
-			componentsSet: [],
 			editing: false
 		};
 	},
@@ -82,33 +81,30 @@ export default defineComponent({
 				closeOnClick: false
 			});
 		});
-
-		this.componentsSet = this.components;
 	},
 	methods: {
 		toggleEditing(): void {
 			this.editing === true ? this.editing = false : this.editing = true;
 			eventBus.$emit('editToggle', this.editing);
+			if(this.editing === false) {
+				eventBus.$emit('resizeMap'); // Resize base map layer after resizing
+			}
 		},
 		toggleComponent(name: string): void {
-			const component = localStorage.getItem(`${name}Component`);
-
-			if(component !== null) {
-				const json = JSON.parse(component);
-				json.enabled === true ? json.enabled = false : json.enabled = true;
-				localStorage.setItem(`${name}Component`, JSON.stringify(json));
-				// @ts-ignore
-				this.componentsSet[name] = json;
+			if(this.components[name] === null) {
+				this.updateComponent({
+					name, 
+					content: {enabled: true}
+				});
 			} else {
-				const string = JSON.stringify({"enabled": true});
-				localStorage.setItem(`${name}Component`, string);
-				// @ts-ignore
-				this.componentsSet[name] = {
-					enabled: true
-				};
+				this.updateComponent({
+					name, 
+					content: {
+						enabled: this.components[name].enabled === true ? false : true
+					}
+				});
 			}
-			// @ts-ignore
-			this.updateComponent(name, this.componentsSet[name]);
+
 			this.$emit('reload');
 		},
 		...mapActions('components', [
