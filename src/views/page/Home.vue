@@ -1,27 +1,27 @@
 <template>
-	<div class="wrapper" ref="wrapper">
+	<div class="wrapper" ref="wrapper" v-if="components">
 		<div class="empty" v-if="wrapperIsEmpty">
 			<img :src="require('@/assets/images/icons/cactus.svg')" height="300" width="300" draggable="false" />
 			<h3>It's empty here</h3>
 			<h6 class="dropdown-trigger" data-target="components_selection">Try adding a new component</h6>
 		</div>
 		
-		<div class="map" id="map" v-if="components.map !== null && components.map.enabled">
+		<div class="map" id="map" v-if="components.map && components.map.enabled === true">
 			<Map :editing="editing" />
 			<div class="margin"></div>
 		</div>
 		
-		<div class="status" id="status" v-if="components.status !== null && components.status.enabled">
+		<div class="status" id="status" v-if="components.status && components.status.enabled === true">
 			<Status :editing="editing" />
 			<div class="margin"></div>
 		</div>
 	
-		<div class="atis" id="atis" v-if="components.atis !== null && components.atis.enabled">
+		<div class="atis" id="atis" v-if="components.atis && components.atis.enabled === true">
 			<Atis :editing="editing" />
 			<div class="margin"></div>
 		</div>
 	
-		<div class="pirep" id="pirep" v-if="components.pirep !== null && components.pirep.enabled">
+		<div class="pirep" id="pirep" v-if="components.pirep && components.pirep.enabled === true">
 			<Pirep :editing="editing" />
 			<div class="margin"></div>
 		</div>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import interact from 'interactjs';
 import eventBus from '@/assets/js/eventBus.js';
 import Map from '@/components/Map.vue';
@@ -41,12 +41,6 @@ export default {
 	name: 'Home',
 	data() {
 		return {
-			components: {
-				"atis": null,
-				"map": null,
-				"pirep": null,
-				"status": null
-			},
 			windowSize: {
 				x: document.body.clientWidth,
 				y: 5000
@@ -61,60 +55,43 @@ export default {
 		Status
 	},
 	async mounted() {
-		await this.getComponents();
+		await this.setComponents();
 		await this.initAllComponents();
 
 		window.addEventListener('resize', this.windowResize);
 
 		eventBus.$on('editToggle', (status) => {
 			this.editing = status;
-		})
+		});
 	},
 	methods: {
-		getComponents() {
-			this.components = {
-				"atis": JSON.parse(localStorage.getItem('atisComponent') || null),
-				"map":  JSON.parse(localStorage.getItem('mapComponent')) || null,
-				"pirep": JSON.parse(localStorage.getItem('pirepComponent')) || null,
-				"status": JSON.parse(localStorage.getItem('statusComponent')) || null,
-			}
-			this.setComponents(this.components);
-		},
 		windowResize() {
 			this.windowSize.x = document.body.clientWidth;
 			if(this.editing) this.initAllComponents();
 		},
-		async initAllComponents() {
+		initAllComponents() {
 			if(this.components['atis'] && this.components['atis'].enabled === true) {
-				await this.setSize('atis');
-				if(this.editing) await this.initComponent('atis');
+				this.setSize('atis');
+				if(this.editing) this.initComponent('atis');
 			}
 			if(this.components['map'] && this.components['map'].enabled === true) {
-				await this.setSize('map');
-				if(this.editing) await this.initComponent('map');
+				this.setSize('map');
+				if(this.editing) this.initComponent('map');
 			}
 			if(this.components['status'] && this.components['status'].enabled === true) {
-				await this.setSize('status');
-				if(this.editing) await this.initComponent('status');
+				this.setSize('status');
+				if(this.editing) this.initComponent('status');
 			}
 			if(this.components['pirep'] && this.components['pirep'].enabled === true) {
-				await this.setSize('pirep');
-				if(this.editing) await this.initComponent('pirep');
+				this.setSize('pirep');
+				if(this.editing) this.initComponent('pirep');
 			}
 		},
-		async destroyAllEditing() {
-			if(this.components['atis'] && this.components['atis'].enabled === true) {
-				await this.destroyEditing('atis');
-			}
-			if(this.components['map'] && this.components['map'].enabled === true) {
-				await this.destroyEditing('map');
-			}
-			if(this.components['status'] && this.components['status'].enabled === true) {
-				await this.destroyEditing('status');
-			}
-			if(this.components['pirep'] && this.components['pirep'].enabled === true) {
-				await this.destroyEditing('pirep');
-			}
+		stopAllEditing() {
+			this.stopEditing('atis');
+			this.stopEditing('map');
+			this.stopEditing('status');
+			this.stopEditing('pirep');
 		},
 		setSize(compName) {
 			// Set intial position
@@ -149,6 +126,7 @@ export default {
 			});
 
 			el.resizable({
+				preserveAspectRatio: false,
 				edges: {
 					top: true,
 					left: true,
@@ -159,6 +137,11 @@ export default {
 					move: function (event) {
 						event.target.style.width = `${event.rect.width}px`;
 						event.target.style.height = `${event.rect.height}px`;
+						
+						position.x += event.deltaRect.left;
+						position.y += event.deltaRect.top;
+
+						event.target.style.transform = `translate(${position.x}px, ${position.y}px)`;
 					}
 				},
 				modifiers: [
@@ -169,13 +152,17 @@ export default {
 			});
 
 			el.on('dragend', () => {
-				this.components[compName].pos_x = position.x;
-				this.components[compName].pos_y = position.y;
-				localStorage.setItem(`${compName}Component`, JSON.stringify(this.components[compName]));
+				this.updateComponent({
+					name: compName,
+					content: {
+						...this.components[compName],
+						pos_x: position.x,
+						pos_y: position.y
+					}
+				});
 			})
 			
 			el.on('resizeend', (event) => {
-				console.log('resizeend');
 				event.interactable.draggable({
 					modifiers: [
 						interact.modifiers.restrictRect({restriction: {
@@ -186,30 +173,44 @@ export default {
 						}})
 					]
 				});
-				this.components[compName].size_x = event.rect.width;
-				this.components[compName].size_y = event.rect.height;
-				localStorage.setItem(`${compName}Component`, JSON.stringify(this.components[compName]));
+
+				this.updateComponent({
+					name: compName,
+					content: {
+						...this.components[compName],
+						pos_x: position.x,
+						pos_y: position.y,
+						size_x: event.rect.width,
+						size_y: event.rect.height
+					}
+				});
 			});
 		},
-		destroyEditing(compName) {
-			interact(`.${compName}`).unset()
+		stopEditing(compName) {
+			if(this.components[compName] && this.components[compName].enabled === true) {
+				interact(`.${compName}`).unset();
+			}
 		},
 		...mapActions('components', [
-			'setComponents'
-		]),
+			'setComponents',
+			'updateComponent'
+		])
 	},
 	computed: {
 		wrapperIsEmpty() {
 			if((this.components['atis'] === null || this.components['atis'].enabled === false) && (this.components['map'] === null || this.components['map'].enabled === false) && (this.components['pirep'] === null || this.components['pirep'].enabled === false) && (this.components['status'] === null || this.components['status'].enabled === false)) return true;
 			else return false;
-		}
+		},
+		...mapState('components', [
+			'components'
+		])
 	},
 	watch: {
 		editing: async function(value) {
 			if(value === true) {
-				await this.initAllComponents();
+				this.initAllComponents();
 			} else {
-				await this.destroyAllEditing();
+				this.stopAllEditing();
 			}
 		}
 	}

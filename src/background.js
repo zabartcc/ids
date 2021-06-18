@@ -16,7 +16,7 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    minWidth: 900,
+    minWidth: 920,
     minHeight: 800,
     title: "Albuquerque ARTCC - Information Display System",
     webPreferences: {

@@ -48,6 +48,7 @@
 <script>
 import {mapState} from 'vuex';
 import {zabApi} from '@/helpers/axios.js';
+
 export default {
 	data() {
 		return {
@@ -69,7 +70,7 @@ export default {
 			try {
 				this.online = null;
 
-				if(localStorage.getItem('guest') !== "true") {
+				if(this.user.isLoggedIn) {
 					const {data} = await zabApi.get('/online');
 					data.data.atc.forEach((atc) => {
 						if(atc.cid === this.user.data.cid) {
@@ -120,21 +121,24 @@ export default {
 	flex-wrap: wrap;
 }
 
-.bar {
-	padding-left: 1em;
-	width: 250px;
-	margin-bottom: 10px;
-}
-
 .status_bar {
-	.title {
-		color: #6C6C6C;
-		font-size: .8em;
+	.bar {
+		min-width: 170px;
+		margin-bottom: 10px;
+
+		.title {
+			color: #6C6C6C;
+			font-size: .8em;
+		}
+		.text {
+			font-size: 1.5em;
+			font-weight: 600;
+			line-height: 1em;
+		}
 	}
-	.text {
-		font-size: 1.5em;
-		font-weight: 600;
-		line-height: 1em;
+
+	&:first-child {
+		padding-left: .5em;
 	}
 }
 </style>

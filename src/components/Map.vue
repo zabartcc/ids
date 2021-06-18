@@ -1,6 +1,6 @@
 <template>
 	<div id="map">
-		<l-map ref="homeMap" v-model="zoom" v-model:zoom="zoom" :zoomAnimation="true" :center="[33.242837, -107.272256]" :attributionControl="false">
+		<l-map ref="map" v-model="zoom" v-model:zoom="zoom" :zoomAnimation="true" :center="[33.242837, -107.272256]" :attributionControl="false">
 			<l-tile-layer url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_nolabels/{z}/{x}/{y}{r}.png"></l-tile-layer>
 			<l-polygon
 				:lat-lngs="[
@@ -170,15 +170,21 @@
 </template>
 
 <script>
-import {LMap, LTileLayer, LPolygon, LWmsTileLayer, LMarker, LIcon, LPolyline, LTooltip} from "@vue-leaflet/vue-leaflet";
+import { LMap, LTileLayer, LPolygon, LWmsTileLayer, LMarker, LIcon, LPolyline, LTooltip } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
-import {mapActions} from 'vuex';
-import {zabApi} from '@/helpers/axios.js';
+import { mapActions } from 'vuex';
+import { zabApi } from '@/helpers/axios.js';
+import eventBus from '@/assets/js/eventBus.js';
 import M from 'materialize-css';
 
 export default {
 	name: 'Map',
-	props: ['editing'],
+	props: {
+		editing: {
+			type: Boolean,
+			required: true
+		}
+	},
 	components: {
 		LMap,
 		LTileLayer,
@@ -206,6 +212,10 @@ export default {
 		await this.initAircraft();
 		this.sse = new EventSource(`${process.env.VUE_APP_API_URL}/ids/aircraft/feed`);
 		this.sse.onmessage = this.handleAircraftUpdate;
+
+		eventBus.$on('resizeMap', () => {
+			this.resizeMapLayer(); // Resizes map base layer after resizing
+		})
 	},
 	methods: {
 		async initAircraft() {
@@ -265,6 +275,9 @@ export default {
 			} else {
 				return;
 			}
+		},
+		resizeMapLayer() {
+			this.$refs.map.leafletObject.invalidateSize();
 		},
 		...mapActions('timer', [
 			'setTimestamp'

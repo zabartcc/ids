@@ -8,13 +8,13 @@
 				<i class="material-icons" @click="openAtis">add_box</i>
 			</div>
 			<div class="add_atis" v-show="newAtis">
-				<form class="add_input" @submit.prevent=addStation>
+				<form class="add_input" @submit.prevent="addStation">
 					<input type="text" ref="new_atis_input" class="browser-default add_input" minlength="4" maxlength="4" v-model="atisInput" />
 				</form>
 			</div>
 		</div>
 		<div class="atis_wrapper">
-			<AtisStrip v-for="station in userStations" :key=station.airport :info="station" />
+			<AtisStrip v-for="station in userStations" :key="station.airport" :info="station" />
 		</div>
 		<div class="edit_overlay" v-if="editing">
 			<h2 class="component_name">ATIS</h2>
@@ -106,19 +106,6 @@ export default {
 			this.newAtis = !this.newAtis;
 			this.atisInput = '';
 		},
-		// async addStation() {
-		// 	if(this.addedStations.indexOf(this.atisInput.toUpperCase()) === -1) {
-		// 		this.addedStations.push(this.atisInput.toUpperCase());
-		// 		localStorage.removeItem('atis_stations');
-		// 		localStorage.setItem('atis_stations', JSON.stringify(this.addedStations));
-		// 		this.atisInput = '';
-		// 		await this.getAllStations();
-
-		// 	} else {
-		// 		return this.atisInput = '';
-		// 	}
-		// 	await this.openAtis();
-		// },
 		openAtis() {
 			this.newAtis = !this.newAtis;
 			if(this.newAtis) {
@@ -141,7 +128,10 @@ export default {
 }
 
 .atis_wrapper {
+	box-sizing: border-box;
 	padding: 0 1em .5em 1em;
+	overflow: auto;
+	height: calc(100% - 40px);
 }
 .top_bar {
 	width: 100%;

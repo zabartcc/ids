@@ -134,7 +134,7 @@ export default {
 
 .pirep_table {
 	overflow: auto;
-	min-height: 89%;
+	height: calc(100% - 37px);
 	width: 100%;
 
 	.table_header {
