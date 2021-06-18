@@ -101,6 +101,7 @@ export default defineComponent({
 		},
 		continueAsGuest(): void {
 			localStorage.setItem('guest', 'true');
+			localStorage.setItem('ids_token', ''); // Remove any previously set (incorrect) IDS token to prevent issues when reloading as a guest
 			this.$router.push('/home');
 		}
 	}

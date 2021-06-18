@@ -6,7 +6,7 @@
 		<div class="settings">
 			<i class="material-icons dropdown-trigger tooltipped" data-target="components_selection" data-tooltip="Toggle Components" data-position="left">add_box</i>
 			<i class="material-icons tooltipped" @click="toggleEditing" data-tooltip="Toggle Editing">edit</i>
-			<i class="material-icons tooltipped" data-tooltip="Settings">settings</i>
+			<a class="modal-trigger" href="#settings_modal"><i class="material-icons tooltipped" data-tooltip="Settings">settings</i></a>
 		</div>
 		<ul id="components_selection" class="dropdown-content">
 			<li @click="toggleComponent('map')">
@@ -147,7 +147,7 @@ export default defineComponent({
 			user-select: none;
 			color: #BFBFBF;
 
-			+i {
+			+i, +a {
 				margin-left: .25em;
 			}
 		}
