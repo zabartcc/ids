@@ -181,11 +181,12 @@ import eventBus from '@/assets/js/eventBus';
 import M from 'materialize-css';
 
 interface State {
-	sse: EventSource | null,
-	aircraft: AircraftOnMap[],
-	zoom: number,
-	pt: number,
-	showDatablock: boolean
+	sse: EventSource | null;
+	aircraft: Record<string, AircraftOnMap>;
+	zoom: number;
+	pt: number;
+	showDatablock: boolean;
+	map: any;
 }
 
 export default defineComponent({
@@ -210,10 +211,11 @@ export default defineComponent({
 	data(): State {
 		return {
 			sse: null,
-			aircraft: [],
+			aircraft: {},
 			zoom: 6,
 			pt: 4,
-			showDatablock: true
+			showDatablock: true,
+			map: null
 		}
 	},
 	async mounted() {
@@ -227,7 +229,11 @@ export default defineComponent({
 
 		eventBus.$on('resizeMap', () => {
 			this.resizeMapLayer(); // Resizes map base layer after resizing
-		})
+		});
+
+		this.$nextTick(() => {
+			this.map = this.$refs.map;
+		});
 	},
 	methods: {
 		async initAircraft(): Promise<void> {
@@ -238,8 +244,7 @@ export default defineComponent({
 			this.setTimestamp(Date.now());
 		},
 		async getAircraftData(callsign: string): Promise<void> {
-			const i = this.aircraft.findIndex(a => a.callsign === callsign);
-			this.aircraft[i] = (await zabApi.get(`/ids/aircraft/${callsign}`)).data;
+			this.aircraft[callsign] = (await zabApi.get(`/ids/aircraft/${callsign}`)).data;
 		},
 		handleAircraftUpdate({data}: any): void {
 			data = JSON.parse(data);
@@ -284,8 +289,9 @@ export default defineComponent({
 				this.pt = (this.pt * 2);
 			}
 		},
-		resizeMapLayer() {
-			(this.$refs.map as any).leafletObject.invalidateSize(); // use 'any' workaround because vue-leaflet has no type definitions
+		async resizeMapLayer() {
+			
+			this.map.leafletObject.invalidateSize(); // use 'any' workaround because vue-leaflet has no type definitions
 		},
 		...mapActions('timer', [
 			'setTimestamp'

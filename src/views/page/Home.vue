@@ -64,7 +64,7 @@ export default defineComponent({
 		Status
 	},
 	async mounted() {
-		this.setComponents();
+		await this.setComponents();
 		this.initAllComponents();
 
 		window.addEventListener('resize', this.windowResize);
@@ -103,9 +103,9 @@ export default defineComponent({
 			this.stopEditing('pirep');
 		},
 		setSize(compName: string): void {
-			// Set intial position
-			const comp = document.getElementById(compName);
+			let comp = document.getElementById(compName);
 			if(comp) {
+				// Set intial position
 				comp.style.transform = `translate(${this.components[compName].pos_x || 0}px, ${this.components[compName].pos_y || 0}px)`
 
 				// Set initial height & width
@@ -129,6 +129,7 @@ export default defineComponent({
 				},
 				modifiers: [
 					interact.modifiers.restrictRect({restriction: {
+						// @ts-ignore
 						x: 0,
 						y: 65,
 						width: this.windowSize.x,
@@ -178,6 +179,7 @@ export default defineComponent({
 				event.interactable.draggable({
 					modifiers: [
 						interact.modifiers.restrictRect({restriction: {
+							// @ts-ignore
 							x: 0,
 							y: 65,
 							width: this.windowSize.x,
