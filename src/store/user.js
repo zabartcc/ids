@@ -25,7 +25,6 @@ export default {
 						token: token
 					});
 					if(data.ret_det.code === 200) {
-						console.log(200);
 						commit('setUser', data.data);
 						commit('setLoggedIn', true);
 						localStorage.setItem('guest', 'false')

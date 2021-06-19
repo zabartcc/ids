@@ -72,7 +72,7 @@ export default defineComponent({
 		}
 	},
 	methods: {
-		delAtis(station: string) {
+		delAtis(station: string): void {
 			// @ts-ignore
 			this.$parent.removeUserStation(station)
 		}

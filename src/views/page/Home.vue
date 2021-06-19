@@ -25,6 +25,11 @@
 			<Pirep :editing="editing" />
 			<div class="margin"></div>
 		</div>
+
+		<div class="charts" id="charts" v-if="components.charts && components.charts.enabled === true">
+			<Charts :editing="editing" />
+			<div class="margin"></div>
+		</div>
 	</div>
 </template>
 
@@ -37,6 +42,7 @@ import Map from '@/components/Map.vue';
 import Atis from '@/components/Atis.vue';
 import Pirep from '@/components/Pirep.vue';
 import Status from '@/components/Status.vue';
+import Charts from '@/components/Charts.vue';
 
 interface State {
 	windowSize: {
@@ -61,7 +67,8 @@ export default defineComponent({
 		Map,
 		Atis,
 		Pirep,
-		Status
+		Status,
+		Charts
 	},
 	async mounted() {
 		await this.setComponents();
@@ -95,12 +102,17 @@ export default defineComponent({
 				this.setSize('pirep');
 				if(this.editing) this.initComponent('pirep');
 			}
+			if(this.components['charts'] && this.components['charts'].enabled === true) {
+				this.setSize('charts');
+				if(this.editing) this.initComponent('charts');
+			}
 		},
 		stopAllEditing(): void {
 			this.stopEditing('atis');
 			this.stopEditing('map');
 			this.stopEditing('status');
 			this.stopEditing('pirep');
+			this.stopEditing('charts');
 		},
 		setSize(compName: string): void {
 			let comp = document.getElementById(compName);
@@ -246,10 +258,9 @@ export default defineComponent({
 	width: 100%;
 	height: 50vh;
 	border-radius: 10px;
-	box-sizing: border-box;
 }
 
-.atis, .pirep, .status, .map {
+.atis, .pirep, .status, .map, .charts {
 	box-sizing: border-box;
 	max-width: 100vw;
 	max-height: calc(100vh - 90px);
@@ -261,7 +272,7 @@ export default defineComponent({
 	}
 }
 
-.atis, .pirep {
+.atis, .pirep, .charts {
 	padding: 1em;
 
 	::-webkit-scrollbar {

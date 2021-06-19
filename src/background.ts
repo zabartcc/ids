@@ -1,21 +1,25 @@
 'use strict'
 
 declare const __static: string;
-import { app, protocol, BrowserWindow } from 'electron'
+import path from 'path';
+import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import { autoUpdater } from 'electron-updater'
+import install from 'electron-devtools-installer';
 const isDevelopment = process.env.NODE_ENV !== 'production'
-import path from 'path';
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
+let mainWindow: any;
+let chartWindow: any;
+
 async function createWindow() {
   // Create the browser window.
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     minWidth: 920,
     minHeight: 800,
     title: "Albuquerque ARTCC - Information Display System",
@@ -24,20 +28,21 @@ async function createWindow() {
       nodeIntegrationInWorker: false,
       nodeIntegrationInSubFrames: false,
       contextIsolation: true,
-      webSecurity: false
+      webSecurity: false,
+      preload: path.join(__dirname, "preload.js")
     },
     icon: path.join(__static, 'icon.png')
   });
 
-  win.setMenuBarVisibility(false)
+  mainWindow.setMenuBarVisibility(false)
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
-    await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
+    await mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+    if (!process.env.IS_TEST) mainWindow.webContents.openDevTools()
   } else {
     createProtocol('app')
     // Load the index.html when not in development
-    win.loadURL('app://./index.html')
+    mainWindow.loadURL('app://./index.html')
   }
 }
 
@@ -72,6 +77,13 @@ app.on('ready', async () => {
 	setInterval(async () => { // check for updates every 60 seconds
 		autoUpdater.checkForUpdatesAndNotify();
 	}, 60000);
+
+  try {
+    await installExtension('ieepebpjnkhaiioojkepfniodjmjjihl') // Install custom PDF viewer extension to prevent Chrome's big side-menu from taking up all the space. Based on pdf.js.
+  } catch(e) {
+    console.error('Failed to install PDF viewer:', e.toString())
+  }
+
 	if (isDevelopment && !process.env.IS_TEST) {
 		// Install Vue Devtools
 		try {
@@ -81,6 +93,26 @@ app.on('ready', async () => {
 		}
 	}
 	createWindow();
+})
+
+ipcMain.on("loadPdfWindow", (event, args) => {
+  let pos = mainWindow.getPosition();
+
+  chartWindow = new BrowserWindow({
+    width: 800,
+    height: 900,
+    title: `${args.airport} – ${args.name}`,
+    webPreferences: {
+      plugins: true
+    },
+    icon: path.join(__static, 'icon.png'),
+    parent: mainWindow
+  })
+
+  chartWindow.setPosition(pos[0], pos[1]); // set X and Y coordinates of chartWindow to that of the mainWindow to prevent it opening up on wrong screen
+  chartWindow.center(); // center on right screen
+  chartWindow.setMenuBarVisibility(false)
+  chartWindow.loadURL(`${args.url}#toolbar=0&view=FitH`);
 })
 
 // Exit cleanly on request from parent process in development mode.

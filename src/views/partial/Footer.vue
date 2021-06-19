@@ -37,6 +37,13 @@
 
 				PIREP
 			</li>
+			<li @click="toggleComponent('charts')">
+				<span class="check_box">
+					<i class="material-icons" v-if="components.charts && components.charts.enabled">check</i>
+				</span>
+
+				CHARTS
+			</li>
 		</ul>
 	</div>
 </template>
@@ -156,7 +163,7 @@ export default defineComponent({
 	#components_selection {
 		width: 200px!important;
 		position: absolute;
-		top: -170px!important;
+		top: -200px!important;
 		left: calc(100% - 270px)!important;
 		background: #0D0D0D;
 		box-shadow: 0 2px 1px 0 rgba(0, 0, 0, 0.24), 0 3px 1px 2px rgba(0, 0, 0, 0.22), 0 1px 10px 0 rgba(0, 0, 0, 0.20);

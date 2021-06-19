@@ -2,25 +2,21 @@ export default {
 	namespaced: true,
 	state: {
 		components: {
-			"atis": {
-				enabled: null,
-				pos_x: null,
-				pos_y: null,
-				size_x: null,
-				size_y: null
-			},
+			"atis": null,
 			"map":  null,
 			"pirep": null,
 			"status": null,
+			"charts": null
 		}
 	},
 	actions: {
 		setComponents: async ({commit}) => {
 			const components = {
-                "atis": JSON.parse(localStorage.getItem('atisComponent') || null),
+                "atis": JSON.parse(localStorage.getItem('atisComponent')) || null,
                 "map":  JSON.parse(localStorage.getItem('mapComponent')) || null,
                 "pirep": JSON.parse(localStorage.getItem('pirepComponent')) || null,
                 "status": JSON.parse(localStorage.getItem('statusComponent')) || null,
+				"charts": JSON.parse(localStorage.getItem('chartsComponent')) || null
             }
 			commit('setComponentsMutation', components);
 			return;
