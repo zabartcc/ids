@@ -22,7 +22,7 @@
     "publish": "npm run electron:build -- --win -p always"
   },
   "main": "background.js",
-  "publishConfig": {
+  "build": {
     "appId": "org.zabartcc.ids",
 				"productName": "Albuquerque ARTCC IDS",
 				"artifactName": "AlbuquerqueIDSInstall.${ext}",
