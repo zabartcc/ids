@@ -82,9 +82,9 @@ app.on('ready', async () => {
   if(!isDevelopment) {
     autoUpdater.checkForUpdates();
 
-    autoUpdater.on('update-downloaded', (info: any) => {
-      log.info('Update downloaded: ' + info.releaseName);
-      mainWindow.webContents.send('update', info.releasename);
+    autoUpdater.on('update-downloaded', (event: any, info: any) => {
+      log.info('Update downloaded: ' + JSON.stringify(info));
+      mainWindow.webContents.send('update', info.releaseName);
     })
   }
 
@@ -94,14 +94,14 @@ app.on('ready', async () => {
     console.error('Failed to install PDF viewer:', e.toString())
   }
 
-	// if (isDevelopment && !process.env.IS_TEST) {
+	 if (isDevelopment && !process.env.IS_TEST) {
 		// Install Vue Devtools
 		try {
 			await installExtension(VUEJS3_DEVTOOLS)
 		} catch (e) {
 			console.error('Vue Devtools failed to install:', e.toString())
 		}
-	// }
+  }
 	createWindow();
 })
 
