@@ -31,7 +31,7 @@
 			</div>
 			<div v-else>
 				<div class="spinner">
-					<Spinner :width="100"/>
+					<Spinner :width="80"/>
 				</div>
 			</div>
 		</div>
