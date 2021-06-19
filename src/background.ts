@@ -1,5 +1,6 @@
 'use strict'
 
+declare const __static: string;
 import path from 'path';
 import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
@@ -12,8 +13,8 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
-let mainWindow = null;
-let chartWindow = null;
+let mainWindow: any;
+let chartWindow: any;
 
 async function createWindow() {
   // Create the browser window.
@@ -73,11 +74,7 @@ app.on('activate', () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
 	setInterval(async () => { // check for updates every 60 seconds
-    try {
-      autoUpdater.checkForUpdatesAndNotify();
-    } catch(e) {
-      console.error(`Something went wrong while checking for updates:`, e);
-    }
+		autoUpdater.checkForUpdatesAndNotify();
 	}, 60000);
 
   try {
