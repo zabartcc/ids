@@ -15,7 +15,7 @@ module.exports = {
 					}
 				},
 				"files": [
-					"dist_electron/preload.js"
+					"build/preload.js"
 				]
 			}
 		}

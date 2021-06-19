@@ -28,7 +28,7 @@ async function createWindow() {
       nodeIntegrationInSubFrames: false,
       contextIsolation: true,
       webSecurity: false,
-      preload: path.join(__dirname, "preload.js")
+      preload: path.join(__dirname, "/../build/preload.js")
     },
     icon: path.join(__static, 'icon.png')
   });
