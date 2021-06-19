@@ -13,11 +13,9 @@ module.exports = {
 						"channel": "latest",
 						"path": "/ids"
 					}
-				},
-				"extraFiles": [
-					"build/preload.js"
-				]
-			}
+				}
+			},
+			preload: 'src/preload.js'
 		}
 	}
-  }
+}
