@@ -81,7 +81,7 @@ export default defineComponent({
 		},
 		closeList(): void {
 			// @ts-ignore
-			this.$parent.$parent.setOpenedAirport();
+			this.$parent.setOpenedAirport();
 		},
 		showChart(url: string, name: string, airport: string): void {
 			// @ts-ignore
