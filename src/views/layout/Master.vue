@@ -69,8 +69,8 @@ export default defineComponent({
 		M.Modal.init(document.querySelectorAll('.modal'), {});
 
 		// @ts-ignore
-		window.ipc.onReceive('update', (event, version) => {
-			this.versionDownloaded = version;
+		window.ipc.onReceive('update', (event) => {
+			this.versionDownloaded = event;
 		})
 	},
 	methods: {
