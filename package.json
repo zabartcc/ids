@@ -22,10 +22,25 @@
     "publish": "npm run electron:build -- --win -p always"
   },
   "main": "background.js",
+  "publishConfig": {
+    "appId": "org.zabartcc.ids",
+				"productName": "Albuquerque ARTCC IDS",
+				"artifactName": "AlbuquerqueIDSInstall.${ext}",
+				"win": {
+					"publish": {
+						"provider": "spaces",
+						"name": "zabartcc",
+						"region": "sfo3",
+						"channel": "latest",
+						"path": "/ids"
+					}
+				}
+  },
   "dependencies": {
     "@vue-leaflet/vue-leaflet": "^0.6.1",
     "axios": "^0.21.1",
     "core-js": "^3.14.0",
+    "electron-auto-update": "^1.3.0",
     "electron-updater": "^4.3.9",
     "interactjs": "^1.10.11",
     "leaflet": "^1.7.1",

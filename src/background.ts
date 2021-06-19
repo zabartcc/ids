@@ -5,7 +5,7 @@ import path from 'path';
 import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
-import { autoUpdater } from 'electron-updater'
+const {autoUpdate} = require('electron-auto-update')
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -73,10 +73,6 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
-	setInterval(async () => { // check for updates every 60 seconds
-		autoUpdater.checkForUpdatesAndNotify();
-	}, 60000);
-
   try {
     await installExtension('ieepebpjnkhaiioojkepfniodjmjjihl') // Install custom PDF viewer extension to prevent Chrome's big side-menu from taking up all the space. Based on pdf.js.
   } catch(e) {
@@ -92,6 +88,9 @@ app.on('ready', async () => {
 		}
 	}
 	createWindow();
+  autoUpdate({
+    checkFrequency: 60000
+  });
 })
 
 ipcMain.on("loadPdfWindow", (event, args) => {
