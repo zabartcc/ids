@@ -25,6 +25,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { zabApi } from '@/helpers/axios';
+import { mapActions } from 'vuex';
 import AtisStrip from './AtisStrip.vue';
 
 interface State {
@@ -71,6 +72,7 @@ export default defineComponent({
 				});
 				await this.getStationData(apt);
 			}
+			this.setTimestamp(Date.now());
 		},
 		async getStationData(airport: string): Promise<void> {
 			const {data} = await zabApi.get(`/ids/stations/${airport}`);
@@ -90,6 +92,7 @@ export default defineComponent({
 					...theStation
 				} 
 			}
+			this.setTimestamp(Date.now());
 		},
 		removeUserStation(airport: string): void {
 			const i = this.enabledStations.findIndex(station => station === airport);
@@ -110,7 +113,10 @@ export default defineComponent({
 			if(this.newAtis) {
 				this.$nextTick(() => (this.$refs.new_atis_input as any).focus())
 			}
-		}
+		},
+		...mapActions('timer', [
+			'setTimestamp'
+		])
 	},
 	computed: {
 		userStations(): Array<AtisStations> {

@@ -55,7 +55,7 @@
 import { defineComponent } from 'vue';
 import PirepStrip from './PirepStrip.vue';
 import { zabApi } from '@/helpers/axios';
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 // @ts-ignore
 import M from 'materialize-css';
 
@@ -96,6 +96,7 @@ export default defineComponent({
 		async getAllPireps(): Promise<void> {
 			const {data} = await zabApi.get('/ids/pireps');
 			this.pireps = data;
+			this.setTimestamp(Date.now());
 		},
 		async submitNewPirep(): Promise<void> {
 			try {
@@ -119,7 +120,10 @@ export default defineComponent({
 		deleteNewPirep() {
 			this.newPirep = {};
 			this.addNewPirep = false;
-		}
+		},
+		...mapActions('timer', [
+			'setTimestamp'
+		])
 	},
 	computed: {
 		...mapState('user', [
