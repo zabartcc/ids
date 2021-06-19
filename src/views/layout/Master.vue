@@ -21,6 +21,12 @@
 		<button class="btn waves-effect right modal-close" @click="updateSettings">Update</button>
 		<button class="btn-flat waves-effect right modal-close" @click="userLogout">Logout</button>
 	</div>
+	<div class="update_notification" v-if="versionDownloaded">
+		<h6>Update downloaded</h6>
+		<p>An update to version {{versionDownloaded}} has been downloaded.  Restart the application to install the update.</p>
+		<button class="btn btn_restart" @click="installUpdate">Restart now</button>
+		<button class="btn-flat btn_later" @click="versionDownloaded = undefined">Restart later</button>
+	</div>
 </template>
 
 <script lang="ts">
@@ -37,6 +43,7 @@ interface State {
 		token: string | null;
 	};
 	reloadKey: number;
+	versionDownloaded?: string;
 }
 
 export default defineComponent({
@@ -46,7 +53,8 @@ export default defineComponent({
 			settings: {
 				token: null
 			},
-			reloadKey: 0
+			reloadKey: 0,
+			versionDownloaded: undefined
 		}
 	},
 	components: {
@@ -59,12 +67,21 @@ export default defineComponent({
 		this.settings.token = localStorage.getItem('ids_token');
 
 		M.Modal.init(document.querySelectorAll('.modal'), {});
+
+		// @ts-ignore
+		window.ipc.onReceive('update', (event, version) => {
+			this.versionDownloaded = version;
+		})
 	},
 	methods: {
 		async updateSettings(): Promise<void> {
 			localStorage.setItem('ids_token', (this.settings.token || ''));
 			await this.getData(localStorage.getItem('ids_token') || '');
 			this.$router.go(0);
+		},
+		installUpdate(): void {
+			// @ts-ignore
+			window.ipc.send('restartToUpdate', {});
 		},
 		userLogout(): void {
 			localStorage.setItem('ids_token', '');
@@ -156,5 +173,27 @@ export default defineComponent({
 
 footer {
 	padding-bottom: 28px;
+}
+
+.update_notification {
+	width: 370px;
+	height: 160px;
+	padding: .25em 1em;
+	border-radius: 5px;
+	position: fixed;
+	left: calc(100% - 370px - 1em);
+	bottom: 3em;
+	background-color: #090909;
+	box-shadow: 0px 0px 3px 1px #090909;
+
+	.btn_restart {
+		float: right;
+		background-color: #D64437;
+	}
+
+	.btn_later {
+		color: #fff;
+		float: right;
+	}
 }
 </style>

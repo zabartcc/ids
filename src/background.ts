@@ -79,33 +79,14 @@ app.on('activate', () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
 
-  autoUpdater.checkForUpdates();
+  if(!isDevelopment) {
+    autoUpdater.checkForUpdates();
 
-  autoUpdater.on('checking-for-update', () => {
-    log.info('Checking for updates');
-  })
-  autoUpdater.on('update-available', (info: any) => {
-    log.info('Update available: ' + info);
-  })
-
-  autoUpdater.on('update-not-available', (info: any) => {
-    log.info('No update available: ' + info);
-  })
-
-  autoUpdater.on('error', (err: any) => {
-    log.info('Update ERROR: ' + err);
-  })
-
-  autoUpdater.on('download-progress', (progressObj: Record<string, any>) => {
-    log.info('Downloading... ');
-    log.info('Speed: ' + progressObj.bytesPerSecond);
-    log.info('downloaded: ' + progressObj.percent + '%');
-  })
-  autoUpdater.on('update-downloaded', (info: any) => {
-    log.info('Update downloaded: ' + info);
-    autoUpdater.quitAndInstall();  
-  })
-
+    autoUpdater.on('update-downloaded', (info: any) => {
+      log.info('Update downloaded: ' + info.releaseName);
+      mainWindow.webContents.send('update', info.releasename);
+    })
+  }
 
   try {
     await installExtension('ieepebpjnkhaiioojkepfniodjmjjihl') // Install custom PDF viewer extension to prevent Chrome's big side-menu from taking up all the space. Based on pdf.js.
@@ -142,6 +123,10 @@ ipcMain.on("loadPdfWindow", (event, args) => {
   chartWindow.center(); // center on right screen
   chartWindow.setMenuBarVisibility(false)
   chartWindow.loadURL(`${args.url}#toolbar=0&view=FitH`);
+})
+
+ipcMain.on("restartToUpdate", (event, args) => {
+  autoUpdater.quitAndInstall();
 })
 
 // Exit cleanly on request from parent process in development mode.
