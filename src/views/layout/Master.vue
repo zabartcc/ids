@@ -23,7 +23,7 @@
 	</div>
 	<div class="update_notification" v-if="versionDownloaded">
 		<h6>Update downloaded</h6>
-		<p>An update to version {{versionDownloaded}} has been downloaded.  Restart the application to install the update.</p>
+		<p>An update to version {{versionDownloaded.split("-")[0]}} has been downloaded.  Restart the application to install the update.</p>
 		<button class="btn btn_restart" @click="installUpdate">Restart now</button>
 		<button class="btn-flat btn_later" @click="versionDownloaded = undefined">Restart later</button>
 	</div>
