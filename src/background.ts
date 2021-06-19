@@ -82,9 +82,9 @@ app.on('ready', async () => {
   if(!isDevelopment) {
     autoUpdater.checkForUpdates();
 
-    autoUpdater.on('update-downloaded', (event: any, releaseName: any) => {
-      log.info('Update downloaded: ' + releaseName);
-      mainWindow.webContents.send('update', releaseName);
+    autoUpdater.on('update-downloaded', (info: any) => {
+      log.info('Update downloaded: ' + info.version);
+      mainWindow.webContents.send('update', info.version);
     })
   }
 
