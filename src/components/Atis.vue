@@ -29,7 +29,7 @@ import AtisStrip from './AtisStrip.vue';
 
 interface State {
 	enabledStations: Array<string>;
-	allStations: AtisStations[];
+	allStations: Array<AtisStations>;
 	newAtis: boolean;
 	atisInput: string;
 	sse: EventSource | null;
@@ -66,9 +66,9 @@ export default defineComponent({
 		async getAllStations(): Promise<void> {
 			const { data } = await zabApi.get('/ids/stations');
 			for await(const apt of data) {
-				this.allStations[apt] = {
+				this.allStations.push({
 					airport: apt
-				}
+				});
 				await this.getStationData(apt);
 			}
 		},
@@ -123,7 +123,6 @@ export default defineComponent({
 					}
 				}
 			}
-
 			return stationsToReturn;
 		}
 	}
@@ -136,20 +135,21 @@ export default defineComponent({
 	width: 100%;
 	background-color: #0F0F0F;
 	border-radius: 15px;
-	padding: 0 1em 1em 1em;
+	padding: 0 0 0 0;
 	font-family: "Lucida Console", "Lucida Sans Typewriter", monaco;
 	overflow: hidden;
 }
 
 .atis_wrapper {
 	box-sizing: border-box;
-	padding: 0 1em .5em 1em;
 	overflow: auto;
 	height: calc(100% - 40px);
+	padding: 0 1em;
 }
+
 .top_bar {
 	width: 100%;
-	padding: .5em 0 .33em 0;
+	padding: .5em 1em .33em 1em;
 	margin-bottom: 5px;
 	.add {
 		float: right;

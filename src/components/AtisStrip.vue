@@ -87,7 +87,6 @@ export default defineComponent({
 
 <style scoped lang="scss">
 #atis-strip {
-	display: inline-block;
 	background-color: #1E1E1E;
 	min-width: 700px;
 	margin-bottom: .5em;
@@ -113,9 +112,9 @@ export default defineComponent({
 .atis_code {
 	font-size: 2.5em;
 	font-weight: 700;
-	padding-left: 2.25%;
 	padding-top: 25px;
 	color: yellow;
+	text-align: center;
 
 	&.update {
 		animation-name: atisUpdate;
@@ -182,7 +181,7 @@ export default defineComponent({
 
 @keyframes atisUpdate {
 	0% { color: yellow; }
-	50% { color: white; }
+	50% { color: #1E1E1E; }
 }
 
 </style>
