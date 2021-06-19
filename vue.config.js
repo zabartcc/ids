@@ -14,7 +14,7 @@ module.exports = {
 						"path": "/ids"
 					}
 				},
-				"files": [
+				"extraFiles": [
 					"build/preload.js"
 				]
 			}
