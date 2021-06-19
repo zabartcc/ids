@@ -5,8 +5,13 @@ import path from 'path';
 import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
-const {autoUpdate} = require('electron-auto-update')
 const isDevelopment = process.env.NODE_ENV !== 'production'
+const {autoUpdater} = require("electron-updater")
+const log = require('electron-log')
+
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -73,6 +78,35 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
+
+  autoUpdater.checkForUpdates();
+
+  autoUpdater.on('checking-for-update', () => {
+    log.info('Checking for updates');
+  })
+  autoUpdater.on('update-available', (info: any) => {
+    log.info('Update available: ' + info);
+  })
+
+  autoUpdater.on('update-not-available', (info: any) => {
+    log.info('No update available: ' + info);
+  })
+
+  autoUpdater.on('error', (err: any) => {
+    log.info('Update ERROR: ' + err);
+  })
+
+  autoUpdater.on('download-progress', (progressObj: Record<string, any>) => {
+    log.info('Downloading... ');
+    log.info('Speed: ' + progressObj.bytesPerSecond);
+    log.info('downloaded: ' + progressObj.percent + '%');
+  })
+  autoUpdater.on('update-downloaded', (info: any) => {
+    log.info('Update downloaded: ' + info);
+    autoUpdater.quitAndInstall();  
+  })
+
+
   try {
     await installExtension('ieepebpjnkhaiioojkepfniodjmjjihl') // Install custom PDF viewer extension to prevent Chrome's big side-menu from taking up all the space. Based on pdf.js.
   } catch(e) {
@@ -88,9 +122,6 @@ app.on('ready', async () => {
 		}
 	}
 	createWindow();
-  autoUpdate({
-    checkFrequency: 60000
-  });
 })
 
 ipcMain.on("loadPdfWindow", (event, args) => {
