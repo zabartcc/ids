@@ -13,7 +13,10 @@ module.exports = {
 						"channel": "latest",
 						"path": "/ids"
 					}
-				}
+				},
+				"files": [
+					"dist_electron/preload.js"
+				]
 			}
 		}
 	}
