@@ -25,11 +25,11 @@
 					<div :class="`airport_button ${airport.class}`" @click="removeAirport(airport.id)" v-else>
 						{{airport.id}}
 					</div>
-					<transition name="expand">
+					<!--<transition name="expand">-->
 						<div class="charts_list" v-if="opened === airport.id">
 							<ChartList :airport="airport" />
 						</div>
-					</transition>
+					<!--</transition>-->
 				</div>
 			</div>
 		</div>
