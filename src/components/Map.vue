@@ -149,11 +149,13 @@
 			<l-wms-tile-layer baseUrl="https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi" layers="nexrad-n0r-900913" :transparent="true" format="image/png" :opacity="0.25" :z-index="100"></l-wms-tile-layer>
 
 			<!-- Dynamically draw planes on map here -->
-			<l-marker v-for="(plane, callsign) in aircraft" :lat-lng="[+plane.lat, +plane.lng]" :key="callsign">
-				<l-icon :icon-url="require('@/assets/images/icons/diamond.png')" :icon-size="[12, 12]" :tooltipAnchor="[50,20]" />
-				<l-polyline :lat-lngs="[[plane.lat, plane.lng], newCoord(+plane.lat, +plane.lng, +plane.speed, +plane.heading)]" color="#C8C806" className="p_track" />
-				<l-tooltip v-if="showDatablock === true" :options="{permanent: true, sticky: true, offset: ([5,30])}">{{plane.callsign}}<br />{{calcAltitude(+plane.altitude, +plane.cruise)}}<br />412 {{('000' + plane.speed).slice(-3)}}<br /><span class="acft_destination">{{plane.destination}}</span></l-tooltip>
-			</l-marker>
+			<span v-if="Object.keys(aircraft).length > 0 && Object.keys(aircraft)[0] !== ''">
+				<l-marker v-for="(plane, callsign) in aircraft" :lat-lng="[+plane.lat, +plane.lng]" :key="callsign">
+					<l-icon :icon-url="require('@/assets/images/icons/diamond.png').default" :icon-size="[12, 12]" :tooltipAnchor="[50,20]" />
+					<l-polyline :lat-lngs="[[plane.lat, plane.lng], newCoord(+plane.lat, +plane.lng, +plane.speed, +plane.heading)]" color="#C8C806" className="p_track" />
+					<l-tooltip v-if="showDatablock === true" :options="{permanent: true, sticky: true, offset: ([5,30])}">{{plane.callsign}}<br />{{calcAltitude(+plane.altitude, +plane.cruise)}}<br />412 {{('000' + plane.speed).slice(-3)}}<br /><span class="acft_destination">{{plane.destination}}</span></l-tooltip>
+				</l-marker>
+			</span>
 		</l-map>
 		<div class="map_controls">
 			<div class="pt">

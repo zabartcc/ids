@@ -70,7 +70,6 @@ export default defineComponent({
 
 		// @ts-ignore
 		window.ipc.onReceive('update', (event) => {
-			console.log(event);
 			this.versionDownloaded = event;
 		})
 	},

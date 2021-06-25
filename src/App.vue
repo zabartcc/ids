@@ -64,6 +64,7 @@ body {
 		left: 50%;
 		top: 50%;
 		transform: translate(-50%, -100%);
+		user-select: none;
 	}
 }
 </style>

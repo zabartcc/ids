@@ -6,12 +6,7 @@ import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
-const {autoUpdater} = require("electron-updater")
-const log = require('electron-log')
-
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info';
-log.info('App starting...');
+const { autoUpdater } = require("electron-updater")
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -83,7 +78,6 @@ app.on('ready', async () => {
     autoUpdater.checkForUpdates();
 
     autoUpdater.on('update-downloaded', (info: any) => {
-      log.info('Update downloaded: ' + info.version);
       mainWindow.webContents.send('update', info.version);
     })
   }
@@ -106,7 +100,7 @@ app.on('ready', async () => {
 })
 
 ipcMain.on("loadPdfWindow", (event, args) => {
-  let pos = mainWindow.getPosition();
+  const pos = mainWindow.getPosition();
 
   chartWindow = new BrowserWindow({
     width: 800,
