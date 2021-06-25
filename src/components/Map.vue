@@ -297,8 +297,7 @@ export default defineComponent({
 				this.pt = (this.pt * 2);
 			}
 		},
-		async resizeMapLayer() {
-			
+		async resizeMapLayer() {			
 			this.map.leafletObject.invalidateSize(); // use 'any' workaround because vue-leaflet has no type definitions
 		},
 		...mapActions('timer', [
@@ -311,7 +310,7 @@ export default defineComponent({
 <style lang="scss">
 @font-face {
 	font-family: "ERAM";
-	src: url('~@/assets/fonts/ERAM.ttf');
+	src: url('https://zabartcc.sfo3.digitaloceanspaces.com/ids/ERAM.woff2') format('woff2');
 	font-weight: 200;
 }
 
