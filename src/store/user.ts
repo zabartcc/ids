@@ -1,6 +1,8 @@
+// @ts-ignore
 import M from 'materialize-css';
-import {zabApi} from '@/helpers/axios';
+import { zabApi } from '@/helpers/axios';
 import router from '../router/index';
+import { Commit } from 'vuex';
 
 export default {
 	namespaced: true,
@@ -11,14 +13,14 @@ export default {
 		}
 	},
 	actions: {
-		setData: async ({commit}, userData) => {
+		setData: async ({commit}: {commit: Commit}, userData: Record<string, any>): Promise<void> => {
 			if(userData) {
 				commit('setUser', userData);
 				commit('setLoggedIn', true);
 				return;
 			}
 		},
-		getData: async({commit}, token) => {
+		getData: async({commit}: {commit: Commit}, token: string): Promise<void> => {
 			try {
 				if((localStorage.getItem('guest') === 'true' && localStorage.getItem('ids_token') !== '') || (localStorage.getItem('guest') !== 'true' && localStorage.getItem('ids_token') !== undefined)) {
 					const {data} = await zabApi.post('/ids/checktoken', {
@@ -49,14 +51,16 @@ export default {
 		}
 	},
 	mutations: {
-		setUser (state, user) {
+		setUser (state: Record<string, any>, user: Record<string, any>): void {
 			state.user.data = user;
 		},
-		setLoggedIn (state, loggedIn) {
+		setLoggedIn (state: Record<string, any>, loggedIn: boolean): void {
 			state.user.isLoggedIn = loggedIn;
 		},
 	},
 	getters: {
-		getUserData: state => state.user.data,
+		getUserData(state: Record<string, any>): Record<string, any> {
+			return state.user.data
+		}
 	}
 };

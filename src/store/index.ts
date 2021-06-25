@@ -1,4 +1,4 @@
-import {createStore} from 'vuex';
+import { createStore } from 'vuex';
 import timer from './timer';
 import user from './user';
 import components from './components';
