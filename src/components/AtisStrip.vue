@@ -12,7 +12,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col s1 atis_code">
+			<div class="col s1 atis_code" :id="`atis_code_${info.airport}`" @click="confirmUpdateSeen(info.airport)">
 				{{info.letter || '—'}}
 			</div>
 			<div class="col s3 runways">
@@ -75,11 +75,23 @@ export default defineComponent({
 		delAtis(station: string): void {
 			// @ts-ignore
 			this.$parent.removeUserStation(station)
+		},
+		confirmUpdateSeen(station: string): void {
+			const el = document.getElementById(`atis_code_${station}`);
+			if(el) el.classList.remove("update");
 		}
 	},
 	computed: {
 		parsedMetar(): ParsedMetar {
 			return parser(this.info.metar);
+		}
+	},
+	watch: {
+		info(newVal, oldVal) {
+			if(newVal.letter !== oldVal.letter) {
+				const el = document.getElementById(`atis_code_${newVal.airport}`);
+				if(el) el.classList.add("update");
+			}
 		}
 	}
 });
@@ -117,9 +129,10 @@ export default defineComponent({
 	text-align: center;
 
 	&.update {
+		cursor: pointer;
 		animation-name: atisUpdate;
-		animation-duration: 2.5s;
-		animation-iteration-count: 3;
+		animation-duration: 2s;
+		animation-iteration-count: infinite;
 	}
 }
 
@@ -160,7 +173,7 @@ export default defineComponent({
 }
 
 .wind {
-	padding: .75rem;
+	padding: .76rem;
 
 	.row {
 		margin-bottom: 0;
@@ -181,7 +194,9 @@ export default defineComponent({
 
 @keyframes atisUpdate {
 	0% { color: yellow; }
+	49% { color: yellow; }
 	50% { color: #1E1E1E; }
+	99% { color: #1E1E1E }
 }
 
 </style>
