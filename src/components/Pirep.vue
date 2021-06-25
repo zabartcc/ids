@@ -146,7 +146,7 @@ export default defineComponent({
 
 .top_bar {
 	width: 100%;
-	padding: .5em 1em .33em 1em;
+	padding: .5em .75em .33em 1em;
 	.add {
 		float: right;
 		margin-top: -25px;

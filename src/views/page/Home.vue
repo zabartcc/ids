@@ -1,7 +1,7 @@
 <template>
 	<div class="wrapper" ref="wrapper" v-if="components">
 		<div class="empty" v-if="wrapperIsEmpty">
-			<img :src="require('@/assets/images/icons/cactus.svg')" alt="No components added" height="300" width="300" draggable="false" />
+			<img :src="require('@/assets/images/icons/cactus.svg').default" alt="No components added" height="300" width="300" draggable="false" />
 			<h3>It's empty here</h3>
 			<h6 class="dropdown-trigger" data-target="components_selection">Try adding a new component</h6>
 		</div>
@@ -122,7 +122,7 @@ export default defineComponent({
 
 				// Set initial height & width
 				comp.style.width = `${this.components[compName].size_x || 600}px`;
-				comp.style.height = `${this.components[compName].size_y || 300}px`;
+				comp.style.height = `${this.components[compName].size_y || 290}px`;
 			}
 		},
 		initComponent(compName: string): void {
@@ -171,7 +171,7 @@ export default defineComponent({
 				},
 				modifiers: [
 					interact.modifiers.restrictSize({
-						min: { width: 600, height: 300 }
+						min: { width: 600, height: 290 }
 					})
 				]
 			});
@@ -284,6 +284,7 @@ export default defineComponent({
 		margin-top: 0;
 		margin-bottom: 0;
 		border-radius: 10px;
+		background-color: #0F0F0F;
 	}
 
 	::-webkit-scrollbar-thumb {

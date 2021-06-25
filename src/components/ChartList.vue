@@ -122,6 +122,7 @@ export default defineComponent({
 	z-index: 998;
 	background-color: #0F0F0F;
 	border-radius: 15px;
+	overflow: hidden;
 }
 
 .top_bar {
@@ -131,10 +132,12 @@ export default defineComponent({
 
 	.title {
 		text-align: center;
+
 		.back {
+			position: absolute;
+			left: .75em;
 			cursor: pointer;
 			user-select: none;
-			float: left;
 		}
 
 		.material-icons {

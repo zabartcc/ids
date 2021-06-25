@@ -25,11 +25,9 @@
 					<div :class="`airport_button ${airport.class}`" @click="removeAirport(airport.id)" v-else>
 						{{airport.id}}
 					</div>
-					<!--<transition name="expand">-->
-						<div class="charts_list" v-if="opened === airport.id">
-							<ChartList :airport="airport" />
-						</div>
-					<!--</transition>-->
+					<div class="charts_list" v-if="opened === airport.id">
+						<ChartList :airport="airport" />
+					</div>
 				</div>
 			</div>
 		</div>
@@ -136,9 +134,10 @@ export default defineComponent({
 	width: 100%;
 	background-color: #0F0F0F;
 	border-radius: 15px;
-	padding: 0 1em 1em 1em;
+	padding: 0 .75em 1em 1em;
 	font-family: "Lucida Console", "Lucida Sans Typewriter", monaco;
 }
+
 
 .charts_wrapper {
 	box-sizing: border-box;

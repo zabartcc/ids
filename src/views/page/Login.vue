@@ -3,7 +3,7 @@
 		<div class="login_container">
 			<div v-if="!loading">
 				<div class="top_text">
-					<img alt="ZAB logo" :src="require('@/assets/images/icons/zab_icon_new.png')" class="login_logo" draggable="false">
+					<img alt="ZAB logo" :src="require('@/assets/images/icons/zab_icon_new.png').default" class="login_logo" draggable="false">
 					<p class="title">Albuquerque ARTCC — Information Display System</p>
 					<p class="description">
 						Welcome to the ZAB Information Display System (IDS). <br /><br />
