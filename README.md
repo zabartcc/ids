@@ -1,4 +1,4 @@
-# Albuquerque ARTCC 2020  - IDS
+# Albuquerque ARTCC - IDS
 Desktop IDS application for the Albuquerque ARTCC
 
 # License
